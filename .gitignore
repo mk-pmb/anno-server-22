@@ -1,4 +1,9 @@
 
+# Host-specific stuff
+/*.@*
+
+
+
 # Auto-generated files:
 /node_modules
 /tmp.*
