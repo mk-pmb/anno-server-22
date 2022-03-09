@@ -5,7 +5,6 @@ import envcfgMergeConfigs from 'envcfg-merge-configs-pmb';
 import express from 'express';
 import makeRedirector from 'deviate';
 import mustBe from 'typechecks-pmb/must-be';
-import fsPr from 'fs/promises';
 import nodeHttp from 'http';
 import objPop from 'objpop';
 import pify from 'pify';
