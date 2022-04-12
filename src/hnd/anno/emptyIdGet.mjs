@@ -1,6 +1,7 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
 import httpErrors from '../../httpErrors.mjs';
+import debugRequest from '../debugRequest.mjs';
 
 import verifyAnnoIdFormat from './verifyAnnoIdFormat.mjs';
 
@@ -9,11 +10,18 @@ const searchNotImpl = httpErrors.notImpl.explain(
 
 
 const EX = async function emptyIdGet(req) {
-  const queryKeys = Object.keys(req.query);
-  if (queryKeys.length) {
-    return searchNotImpl(req);
+  const queryEnts = Object.entries(req.query);
+  const nQuery = queryEnts.length;
+  if (!nQuery) { return verifyAnnoIdFormat(); }
+
+  if (nQuery === 1) {
+    const [qk, qv] = queryEnts[0];
+    if (qk === '$target') {
+      return debugRequest(req) || qv;
+    }
   }
-  return verifyAnnoIdFormat();
+
+  return searchNotImpl(req);
 };
 
 
