@@ -15,20 +15,32 @@ Object.assign(EX, {
 
   async annoRoute(req, srv) {
     const urlSubDirs = hndUtil.getFirstAsteriskDirs(req);
-    const { method } = req;
-    if (method !== 'GET') { return httpErrors.badVerb(req); }
-
     // console.debug('annoHnd: urlSubDirs =', urlSubDirs);
     if (urlSubDirs.length !== 1) {
       return httpErrors.notImpl.explain(req,
         'Anno subresource not implemented');
     }
     const [annoId] = urlSubDirs;
-    if (!annoId) {
-      return emptyIdGet(req, srv);
-    }
-    return idGet(annoId, req, srv);
+    if (annoId) { return EX.annoIdRoute(annoId, req, srv); }
+    return EX.emptyIdRoute(req, srv);
   },
+
+
+  async emptyIdRoute(req, srv) {
+    const { method } = req;
+    if (method === 'GET') { return emptyIdGet(req, srv); }
+
+    return httpErrors.badVerb(req);
+  },
+
+
+  async annoIdRoute(annoId, req, srv) {
+    const { method } = req;
+    if (method === 'GET') { return idGet(annoId, req, srv); }
+
+    return httpErrors.badVerb(req);
+  },
+
 
 });
 
