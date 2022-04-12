@@ -1,13 +1,9 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
+import emptyIdGet from './emptyIdGet.mjs';
 import hndUtil from '../hndUtil.mjs';
 import httpErrors from '../../httpErrors.mjs';
 import idGet from './idGet.mjs';
-import verifyAnnoIdFormat from './verifyAnnoIdFormat.mjs';
-
-
-const searchNotImpl = httpErrors.notImpl.explain(
-  'Unsupported combination of search criteria.');
 
 
 const EX = async function makeAnnoRoute(srv) {
@@ -29,13 +25,8 @@ Object.assign(EX, {
     }
     const [annoId] = urlSubDirs;
     if (!annoId) {
-      const queryKeys = Object.keys(req.query);
-      if (queryKeys.length) {
-        return searchNotImpl(req);
-      }
-      return verifyAnnoIdFormat(annoId);
+      return emptyIdGet(req, srv);
     }
-
     return idGet(annoId, req, srv);
   },
 
