@@ -30,6 +30,13 @@ const defaultConfig = {
 
 
 
+function logRequestCheckpoint(where, ...details) {
+  const req = this;
+  console.debug(where, req.method, req.originalUrl, ...details);
+  return req;
+}
+
+
 const EX = async function createServer(customConfig) {
   const entireConfig = envcfgMergeConfigs({ ifPrefixProp: 'envcfg_prefix' },
     defaultConfig, customConfig);
@@ -76,6 +83,7 @@ const EX = async function createServer(customConfig) {
   app.globalRequestExtras({
     getDb() { return srv.db; },
     getSrv() { return srv; },
+    logCkp: logRequestCheckpoint,
   });
 
   return srv;
