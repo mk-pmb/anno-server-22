@@ -1,7 +1,10 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
+import makeGenericAsyncCorsHandler from 'cors-async';
 import pify from 'pify';
 import smartListen from 'net-smartlisten-pmb';
+
+import hndUtil from './hnd/hndUtil.mjs';
 
 
 const EX = function installListenAddrPlumbing(srv) {
@@ -13,6 +16,11 @@ const EX = function installListenAddrPlumbing(srv) {
   const noSlashPubUrl = String(pubUrl || lsnSpec)
     // ^-- Please don't reinvent hndUtil.guessOrigReqUrl(req).
     .replace(/^TCP /, '').replace(/\/$/, '');
+
+  const confirmCors = hndUtil.legacyMultiArg(makeGenericAsyncCorsHandler({
+    origin: srv.popCfg('nonEmpty str', 'cors_accept_origin'),
+    optionsSuccessStatus: 200, // as recommended by npm:cors
+  }));
 
   const webSrv = srv.getLowLevelWebServer();
 
@@ -38,6 +46,7 @@ const EX = function installListenAddrPlumbing(srv) {
 
   Object.assign(srv, {
     close,
+    confirmCors,
     listen,
     publicBaseUrlNoSlash: noSlashPubUrl,
   });

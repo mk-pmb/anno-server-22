@@ -4,6 +4,7 @@ import emptyIdGet from './emptyIdGet.mjs';
 import hndUtil from '../hndUtil.mjs';
 import httpErrors from '../../httpErrors.mjs';
 import idGet from './idGet.mjs';
+import sendFinalTextResponse from '../../finalTextResponse.mjs';
 
 
 const EX = async function makeAnnoRoute(srv) {
@@ -11,9 +12,12 @@ const EX = async function makeAnnoRoute(srv) {
   return rt;
 };
 
+
 Object.assign(EX, {
 
   async annoRoute(req, srv) {
+    srv.confirmCors(req);
+    if (req.method === 'OPTIONS') { return; }
     const urlSubDirs = hndUtil.getFirstAsteriskDirs(req);
     // console.debug('annoHnd: urlSubDirs =', urlSubDirs);
     if (urlSubDirs.length !== 1) {
