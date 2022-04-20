@@ -8,11 +8,15 @@ import verifyAnnoIdFormat from './verifyAnnoIdFormat.mjs';
 
 const namedEqual = equal.named.deepStrictEqual;
 
+const queryTpl = `
+  "details" FROM "anno_data"
+  WHERE "anno_id" = $1 LIMIT 2;
+`.trim();
+
 
 async function idGet(srv, req, annoId) {
   verifyAnnoIdFormat(annoId);
-  const reply = await srv.db.postgresSelect('"details" FROM "anno_data"'
-    + ' WHERE "anno_id" = $1 LIMIT 2;', [annoId]);
+  const reply = await srv.db.postgresSelect(queryTpl, [annoId]);
   const { rows } = reply;
   const nRows = rows.length;
   if (!nRows) { return httpErrors.noSuchAnno(req, 'ID not in database'); }
