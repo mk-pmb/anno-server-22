@@ -9,7 +9,7 @@ import verifyAnnoIdFormat from './verifyAnnoIdFormat.mjs';
 const namedEqual = equal.named.deepStrictEqual;
 
 
-async function idGet(annoId, req, srv) {
+async function idGet(srv, req, annoId) {
   verifyAnnoIdFormat(annoId);
   const reply = await srv.db.postgresSelect('"details" FROM "anno_data"'
     + ' WHERE "anno_id" = $1 LIMIT 2;', [annoId]);
