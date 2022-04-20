@@ -1,5 +1,8 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
+import getOwn from 'getown';
+import conciseValuePreview from 'concise-value-preview-pmb';
+
 import emptyIdGet from './emptyIdGet.mjs';
 import hndUtil from '../hndUtil.mjs';
 import httpErrors from '../../httpErrors.mjs';
@@ -25,6 +28,7 @@ Object.assign(EX, {
         'Anno subresource not implemented');
     }
     const [annoId] = urlSubDirs;
+    // req.logCkp('annoRoute', { method, annoId });
     if (annoId) { return EX.annoIdRoute(srv, req, annoId); }
     return EX.emptyIdRoute(srv, req);
   },
@@ -40,9 +44,17 @@ Object.assign(EX, {
 
   async annoIdRoute(srv, req, annoId) {
     const { method } = req;
+    const fx = (getOwn(EX, method.toLowerCase() + '_' + annoId)
+      || getOwn(EX, 'other_' + annoId));
+    req.logCkp('annoIdRoute fx:', conciseValuePreview(fx));
+    if (fx) { return fx(srv, req, annoId); }
     if (method === 'GET') { return idGet(srv, req, annoId); }
-
     return httpErrors.badVerb(req);
+  },
+
+
+  async post_acl(srv, req) {
+    return sendFinalTextResponse.json(req, { stub: true });
   },
 
 
