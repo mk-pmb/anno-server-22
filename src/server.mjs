@@ -13,6 +13,7 @@ import httpErrors from './httpErrors.mjs';
 import installGlobalRequestExtras from './hnd/globalRequestExtras.mjs';
 import installListenAddrPlumbing from './listenAddrPlumbing.mjs';
 import installRootRoutes from './hnd/rootRoutes.mjs';
+import logRequestCheckpoint from './logRequestCheckpoint.mjs';
 import timeoutFallbackResponse from './timeoutFallbackResponse.mjs';
 
 
@@ -28,14 +29,6 @@ const defaultConfig = {
   db: dbAdapter.getConfigDefaults(),
 
 };
-
-
-
-function logRequestCheckpoint(where, ...details) {
-  const req = this;
-  console.debug(where, req.method, req.originalUrl, ...details);
-  return req;
-}
 
 
 const EX = async function createServer(customConfig) {
