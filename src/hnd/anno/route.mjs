@@ -24,8 +24,8 @@ Object.assign(EX, {
     const urlSubDirs = hndUtil.getFirstAsteriskDirs(req);
     // console.debug('annoHnd: urlSubDirs =', urlSubDirs);
     if (urlSubDirs.length !== 1) {
-      return httpErrors.notImpl.explain(req,
-        'Anno subresource not implemented');
+      return httpErrors.notImpl.explain('Anno subresource not implemented'
+        + urlSubDirs[0])(req);
     }
     const [annoId] = urlSubDirs;
     // req.logCkp('annoRoute', { method, annoId });
