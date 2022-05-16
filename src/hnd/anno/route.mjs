@@ -29,9 +29,9 @@ Object.assign(EX, {
         + urlSubDirs[1])(req);
     }
     if (nUrlSubDirs !== 1) { throw new Error('Bad route declaration'); }
-    const [annoId] = urlSubDirs;
-    // req.logCkp('annoRoute', { method, annoId });
-    if (annoId) { return EX.annoIdRoute(srv, req, annoId); }
+    const [slug] = urlSubDirs;
+    // req.logCkp('annoRoute', { method, slug });
+    if (slug) { return EX.annoIdRoute(srv, req, slug); }
     return EX.emptyIdRoute(srv, req);
   },
 
@@ -44,13 +44,13 @@ Object.assign(EX, {
   },
 
 
-  async annoIdRoute(srv, req, annoId) {
+  async annoIdRoute(srv, req, slug) {
     const { method } = req;
-    const fx = (getOwn(EX, method.toLowerCase() + '_' + annoId)
-      || getOwn(EX, 'other_' + annoId));
-    req.logCkp('annoIdRoute fx:', conciseValuePreview(fx));
-    if (fx) { return fx(srv, req, annoId); }
-    if (method === 'GET') { return idGet(srv, req, annoId); }
+    const fx = (getOwn(EX, method.toLowerCase() + '_' + slug)
+      || getOwn(EX, 'other_' + slug));
+    req.logCkp('annoIdRoute fx?', 'fx =', conciseValuePreview(fx));
+    if (fx) { return fx(srv, req, slug); }
+    if (method === 'GET') { return idGet(srv, req, slug); }
     return httpErrors.badVerb(req);
   },
 

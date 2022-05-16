@@ -3,7 +3,7 @@
 // import debugRequest from '../debugRequest.mjs';
 import httpErrors from '../../httpErrors.mjs';
 import legacySearchByTarget from './legacySearchByTarget.mjs';
-import verifyAnnoIdFormat from './verifyAnnoIdFormat.mjs';
+import parseAnnoSlug from './parseAnnoSlug.mjs';
 
 const searchNotImpl = httpErrors.notImpl.explain(
   'Unsupported combination of search criteria.');
@@ -12,7 +12,7 @@ const searchNotImpl = httpErrors.notImpl.explain(
 const EX = async function emptyIdGet(srv, req) {
   const queryEnts = Object.entries(req.query);
   const nQuery = queryEnts.length;
-  if (!nQuery) { return verifyAnnoIdFormat(); }
+  if (!nQuery) { return parseAnnoSlug(); }
 
   if (nQuery === 1) {
     const [qk, qv] = queryEnts[0];
