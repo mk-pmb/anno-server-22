@@ -6,19 +6,20 @@ const errNoId = httpErrors.noSuchAnno.explain('No anno ID given');
 const errBadId = httpErrors.noSuchAnno.explain('Unsupported anno ID format');
 
 
-const slugRgx = /^([A-Za-z0-9_\-]{10,36})(?:\.(\d+)|)(?:\~(\d+)|)$/;
+const slugRgx = /^([A-Za-z0-9_\-]{10,36})((?:\.[\d\.]+)*)(?:\~(\d+)|)$/;
 
 const EX = function parseAnnoSlug(slug) {
   if (!slug) { throw errNoId.throwable(); }
   const m = slugRgx.exec(slug);
   if (!m) { throw errBadId.throwable(); }
   const parts = {
-    id: m[1],
-    legacyMongoId: m[1],
-    legacyReplyNum: (+m[2] || 0),
+    slug,
+    mongoId: m[1],
+    replySuf: (m[2] || ''),
     reviNum: (+m[3] || 0),
   };
-  if (parts.legacyReplyNum) { parts.id += '.' + parts.legacyReplyNum; }
+  parts.annoId = parts.mongoId + parts.replySuf;
+  parts.replyNums = parts.replySuf.split('.').slice(1).map(n => +n);
   return parts;
 };
 
