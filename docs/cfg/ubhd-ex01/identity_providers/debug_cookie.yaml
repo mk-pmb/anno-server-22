@@ -1,0 +1,17 @@
+%YAML 1.2
+# -*- coding: UTF-8, tab-width: 4 -*-
+---
+
+identity_sources:
+    # As explained in `./staging_server.yaml`, we use number prefixes
+    # for priority. If this file config is enabeld (symlinked),
+    # the debug cookie will be tried before the Apache headers are.
+    # Thus, when a cookie by this name and with a non-empty value is
+    # found, the cookie will win.
+
+    10_debug_cookie:
+        method: 'cookie'
+        cookie_name: 'username'
+
+
+...
