@@ -20,6 +20,8 @@
         discover: allow
         # ^- Required to read version history
 
+        read: allow
+
 
   - if:
         memberOfAclGroup: 'suspended'
@@ -53,31 +55,8 @@
         search_hasStamp__ubhd_doiAssign: allow
 
 
-  - ifAll:
-      - paramInList:
-            param: 'serviceId'
-            list:
-              - 'anno-frontend-tests'
-      - isLoggedIn
-    decide:
-        create: allow
-        create_across_services: allow
-        read: allow
-    # debugDump: meta
-
-
-  - param: 'serviceId'
-    if:
-        paramInList:
-            - 'diglit'
-            - 'journals'
-    aclSubChain: '📚_rules'
-        # ^-- Apply the rules from `📚_rules.yaml` right now, where 📚
-        #   is the placeholder for serviceId.
-
-
-
-
+  - if: isLoggedIn
+    aclSubChain: logged_in_users
 
 
 
