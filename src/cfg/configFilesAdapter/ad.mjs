@@ -22,6 +22,7 @@ const EX = {
       cfgDict,
       cfgDir: cfgDict.dir,
     });
+    ad.customData = await ad.readAsDict('custom_data');
     return ad;
   },
 
