@@ -72,7 +72,7 @@
     "nullify-object-values-shallow-inplace": "^0.1.0",
     "obj-from-keys-list": "^0.1.0",
     "objdive": "^0.1.4",
-    "objpop": "^0.3.3",
+    "objpop": "^0.3.4",
     "ordered-map-extended-pmb": "^0.1.2",
     "p-each-series": "^2.2.0",
     "p-fatal": "^0.1.5",
@@ -101,6 +101,7 @@
     "vtry": "^1.0.9",
     "webanno-compare-target-lists-pmb": "^0.1.2",
     "webanno-guess-subject-target-url-pmb": "^1.0.4",
+    "xmlattrdict": "^0.1.13",
     "xmlunidefuse": "^0.1.4"
   },
   "devDependencies": {

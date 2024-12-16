@@ -53,7 +53,8 @@ const EX = async function multiSearch(ctx) {
   stopwatch.earlyAcl = Date.now();
 
   const meta = {
-    outFmt: ctx.outFmt || '',
+    outFmt: ctx.outFmt || popUntrustedOpt('fmt') || '',
+    subjTgtSpec: subjTgtSpec || '',
   };
 
   const search = buildSearchQuery.prepare('#defaultSearchCore');
