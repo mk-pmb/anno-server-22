@@ -30,6 +30,12 @@ function createSimpleTable(name, fields) {
 
 
 
+const todoLinksNoDupes = `ALTER TABLE "anno_links"
+  ADD CONSTRAINT "anno_links_entire_row"
+  UNIQUE ("base_id", "version_num", "rel", "url")`;
+if (todoLinksNoDupes) { throw new Error(todoLinksNoDupes); }
+
+
 const annoAddrTypes = {
   base_id: 'char*',
   version_num: 'smallint',
