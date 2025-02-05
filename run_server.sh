@@ -8,6 +8,8 @@ function run_cli_main () {
   local SELFPATH="$(dirname -- "$SELFFILE")"
   cd -- "$SELFPATH" || return $?
 
+  [ -n "$USER" ] || export USER="$(whoami)"
+
   local -A CFG=(
     [run_task]='run_server_show_log_on_failure'
     [lint]=
@@ -21,6 +23,11 @@ function run_cli_main () {
   for ITEM in cfg.@"$HOSTNAME"{/*,.*,}.rc; do
     [ ! -f "$ITEM" ] || source_in_func "$ITEM" cfg:annosrv || return $?
   done
+
+  if [ "$USER@$PWD" == root@/app ]; then
+    # Assume we're running in docker.
+    git config --global --add safe.directory /app
+  fi
 
   "${CFG[run_task]}" "$@" || return $?
 }
@@ -50,6 +57,12 @@ function actually_run_server () {
   tee_output_to_logfile || return $?
   verify_sigterm_compat || return $?
   verify_run_prog || return $?
+
+  local GIT_REPORT="$( (
+    git log --format=%h -n 5
+    git status --porcelain -uno | grep . || echo clean
+    ) | tr -s '\n ' ' ')"
+  log_progress "Git status: ${GIT_REPORT% }"
 
   local LINT="${CFG[lint]}"
   if [ -n "$LINT" ]; then
