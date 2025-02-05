@@ -21,6 +21,13 @@ Installation
 
 
 
+API
+---
+
+* [API cheatsheet](docs/api/cheatsheet.md)
+
+
+
 Configuration overview
 ----------------------
 
