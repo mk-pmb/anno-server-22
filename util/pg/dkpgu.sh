@@ -76,6 +76,8 @@ function dkpgu_is_gzip_file () {
 
 
 function dkpgu_file () {
+  [ -f "$1" ] || return 4$(
+    echo E: "Input file seems to not be a regular file: $1" >&2)
   if dkpgu_is_gzip_file "$1"; then
     exec < <(gzip -dc -- "$1")
     set -- /dev/stdin
