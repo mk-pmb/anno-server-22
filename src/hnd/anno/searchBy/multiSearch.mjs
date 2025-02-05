@@ -50,6 +50,9 @@ const EX = async function multiSearch(ctx) {
     privilegeName: 'discover',
     targetUrl: subjTgtSpec,
   }));
+
+  const debugHints = req.userFacingErrorDebugHints;
+  debugHints.stopWatch = stopwatchUtil.durations.bind(null, stopwatch);
   stopwatch.earlyAcl = Date.now();
 
   const meta = {
@@ -152,6 +155,7 @@ const EX = async function multiSearch(ctx) {
   stopwatch.prep = Date.now();
   const found = await search.selectAll(srv);
   stopwatch.db = Date.now();
+  debugHints.nResults = found.length;
   // console.debug('subjectTarget: found =', found, '</</ subjTgt found');
 
   await (skipAcl || EX.checkSubjTgtAcl(srv, req,
@@ -171,8 +175,8 @@ const EX = async function multiSearch(ctx) {
   });
 
   stopwatch.packaged = Date.now();
-  meta.stopwatchDurations = stopwatchUtil.durations(stopwatch);
-  meta.stopwatchDurations += ', nResult=' + found.length;
+  meta.stopwatchDurations = debugHints.stopWatch();
+  meta.stopwatchDurations += ', nResults=' + found.length;
   return found;
 };
 

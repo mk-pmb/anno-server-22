@@ -10,14 +10,27 @@ import guessClientPrefersHtml from './util/guessClientPrefersHtml.mjs';
 
 
 const EX = function installGlobalRequestExtras(app) {
-  const f = function extras(...u) { return Object.assign(f, ...u); };
+  const allSharedExtras = { ...EX.initialExtras };
+  app.use(EX.enhanceOneRequest.bind(null, allSharedExtras));
+
+  const add = Object.assign.bind(null, allSharedExtras);
   // ^- This function can be used to easily add more extras later on
   //    once they are available (like `.getDb`).
-  Object.assign(f, EX.initialExtras);
-  app.use(function enhance(req) { Object.assign(req, f).next(); });
-  app.globalRequestExtras = f; // eslint-disable-line no-param-reassign
-  return f;
+  app.globalRequestExtras = add; // eslint-disable-line no-param-reassign
+  return add;
 };
+
+
+Object.assign(EX, {
+
+  enhanceOneRequest(allSharedExtras, req) {
+    Object.assign(req, allSharedExtras, {
+      userFacingErrorDebugHints: {},
+    }).next();
+  },
+
+
+});
 
 
 EX.initialExtras = {

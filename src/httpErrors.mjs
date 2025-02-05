@@ -22,8 +22,8 @@ const simpleCanneds = {
 
   noSuchResource: makeCanned(405, 'Method Not Allowed',
     { getLike: { code: 404, text: 'Resource not found' } }),
-  unexpectedlySlowTask: makeCanned(500,
-    'Internal Server Error: Task exceeds expected time limit.'),
+  unexpectedlySlowTask: makeCanned(500, 'Internal Server Error'
+    + ': Task exceeds expected time limit. Technical details, if provided'),
   fubar: makeCanned(500, 'Internal Server Error'),
 
   genericDeny: makeCanned(403, 'Forbidden'),
