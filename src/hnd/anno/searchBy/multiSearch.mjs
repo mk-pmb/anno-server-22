@@ -132,7 +132,7 @@ const EX = async function multiSearch(ctx) {
     return 'ASC';
   }()));
 
-  const contentMode = getOwn(EX.contentModeDetails, ctx.readContent, false);
+  const contentMode = EX.decideContentMode({ ctx, meta, popUntrustedOpt });
   if (contentMode.priv) {
     // Always delay:
     //  * To validate read (or similar) on all targets,
@@ -195,10 +195,17 @@ Object.assign(EX, {
   },
 
 
-  miscUntrustedMetaOptNames: [
-    'scaleTargetWidth',
-    'scaleTargetHeight',
-  ],
+  decideContentMode(how) {
+    const { ctx, popUntrustedOpt } = how;
+    let cm = ctx.readContent;
+    if (cm === undefined) {
+      cm = popUntrustedOpt.firstDefinedKey(EX.requestedContentModePriority);
+      cm = cm.key;
+    }
+    if (!cm) { return false; }
+    cm = getOwn(EX.contentModeDetails, cm, false);
+    return cm;
+  },
 
 
   async checkSubjTgtAcl(srv, req, privNamesSet, found, additionalTargetUrls) {
@@ -306,7 +313,13 @@ Object.assign(EX, {
 });
 
 
+EX.requestedContentModePriority = [
+  'justTitles',
+];
+
+
 EX.miscUntrustedMetaOptNames = [
+  ...EX.requestedContentModePriority,
   'scaleTargetHeight',
   'scaleTargetWidth',
 ];
