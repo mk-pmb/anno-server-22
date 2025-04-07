@@ -77,6 +77,13 @@ function dkpgu_export () {
     --strict-names
     --data-only
     )
+
+  DUMP_OPT+=(
+    # We need to use INSERT statements because the default mode (COPY/TSV)
+    # cannot represent our custom data type for the versid columns.
+    --column-inserts
+    )
+
   dkpgu_psql_dfopt pg_dump "${DUMP_OPT[@]}" "$@";
 }
 

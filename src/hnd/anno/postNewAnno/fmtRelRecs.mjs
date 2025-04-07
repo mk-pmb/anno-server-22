@@ -36,7 +36,7 @@ const EX = function fmtRelRecs(how) {
     const urlsList = tgtCateg[relTypeInfo.reportField];
     const rel = relTypeInfo.dbRelName;
     urlsList.forEach(function addUrl(url) {
-      relRecs.push({ base_id: baseId, version_num: versNum, rel, url });
+      relRecs.push({ versid: [Array, baseId, versNum], rel, url });
     });
   });
   return relRecs;

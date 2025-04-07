@@ -4,7 +4,7 @@ import makeStampDeleter from '../util/makeStampDeleter.mjs';
 import miscMetaFieldInfos from '../miscMetaFieldInfos.mjs';
 
 const stType = miscMetaFieldInfos.doiRequestStampName;
-const delDoiReq = makeStampDeleter.fromCtxProp(stType);
+const delDoiReq = makeStampDeleter.fromCtxProp({ st_type: stType });
 
 const EX = {
   deleteDoiRequestStamp: delDoiReq,

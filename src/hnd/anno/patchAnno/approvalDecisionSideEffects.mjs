@@ -10,25 +10,18 @@ const unapStamp = miscMetaFieldInfos.unapprovedStampName;
 const sunsetUEV = async function sunsetUndecidedEarlierVersions(ctx) {
   const st = ctx.mainStampRec;
   const { sqlTpl } = sunsetUEV;
-  const args = [
-    st.base_id,
-    st.version_num,
-    st.st_at,
-    st.st_by,
-  ];
+  const [, stBaseId, stVersNum] = st.versid;
+  const args = [stBaseId, stVersNum, st.st_at, st.st_by];
   await ctx.srv.db.postgresQueryRows(sqlTpl, args);
 };
 
 sunsetUEV.sqlTpl = `
-  INSERT INTO anno_stamps
-    (base_id, version_num, st_at, st_by, st_type)
-  SELECT da.base_id, da.version_num,
-    $3 AS st_at, $4 AS st_by, 'as:deleted' AS st_type
-  FROM anno_data AS da
-  LEFT JOIN anno_stamps AS st USING (base_id, version_num)
+  INSERT INTO anno_stamps (versid, st_at, st_by, st_type)
+  SELECT da.versid, $3 AS st_at, $4 AS st_by, 'as:deleted' AS st_type
+  FROM anno_data AS da LEFT JOIN anno_stamps AS st USING (versid)
   WHERE st.st_type = '${unapStamp}'
-    AND da.base_id = $1 AND da.version_num < $2
-  ON CONFLICT (base_id, version_num, st_type) DO NOTHING;
+    AND (da.versid).baseid = $1 AND (da.versid).vernum < $2
+  ON CONFLICT (versid, st_type) DO NOTHING;
   `;
 
 
