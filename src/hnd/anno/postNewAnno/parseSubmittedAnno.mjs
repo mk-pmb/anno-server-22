@@ -17,7 +17,7 @@ const alwaysDiscardFields = [
   'iana:version-history',
 ];
 
-const unpackSingleElementArrays = [
+const potentialSingleElementArraysToUnpack = [
   'rights',
   'type',
 ];
@@ -32,60 +32,47 @@ function maybeWrapId(rec) {
 function orf(x) { return x || false; }
 
 
+const baseUtil = {
+  bindAllTo(o, ...a) { return loMapValues(o, v => v.bind(...a)); },
+  loMapValues,
+  maybeWrapId,
+  orf,
+};
+
+
 const EX = function parseSubmittedAnno(mustPopInput, cfg) {
+  const anno = {};
+  const util = baseUtil.bindAllTo(EX.util, null, { anno, mustPopInput });
   redundantGenericAnnoMeta.mustPopAllStatic(mustPopInput);
   alwaysDiscardFields.forEach(k => mustPopInput('any', k));
 
-  const anno = {};
-  function copy(key, rule) {
-    const val = mustPopInput(rule, key);
-    if (val !== undefined) { anno[key] = val; }
-  }
-  verbatimCopyKeysMandatedByProtocol.forEach(k => copy(k, 'str | undef'));
-  copy('id', 'nonEmpty str | undef');
+  verbatimCopyKeysMandatedByProtocol.forEach(k => util.copy(k, 'str | undef'));
+  util.copy('id', 'nonEmpty str | undef');
 
   if (cfg.extraCopyFields) {
-    loMapValues(cfg.extraCopyFields, (rule, key) => copy(key, rule));
+    loMapValues(cfg.extraCopyFields, (rule, key) => util.copy(key, rule));
   }
 
-  copy('as:audience', 'obj | ary | nonEmpty str | undef');
-  copy('as:context', 'obj | ary | nonEmpty str | undef');
-  copy('creator', 'obj | ary | nonEmpty str | undef');
-  copy('dc:isVersionOf', 'nonEmpty str | undef');
-  copy('dc:language', 'nonEmpty str | undef');
-  copy('dc:replaces', 'nonEmpty str | undef');
-  copy('dc:title', 'nonEmpty str');
-  copy('rights', 'nonEmpty str | undef');
+  util.copy('as:audience', 'obj | ary | nonEmpty str | undef');
+  util.copy('as:context', 'obj | ary | nonEmpty str | undef');
+  util.copy('creator', 'obj | ary | nonEmpty str | undef');
+  util.copy('dc:isVersionOf', 'nonEmpty str | undef');
+  util.copy('dc:language', 'nonEmpty str | undef');
+  util.copy('dc:replaces', 'nonEmpty str | undef');
+  util.copy('dc:title', 'nonEmpty str');
+  util.copy('rights', 'nonEmpty str | undef');
 
-  function parseResource(key) {
-    const spec = mustPopInput('obj | ary | nonEmpty str | undef', key);
-    const list = arrayOfTruths(spec).map(maybeWrapId);
-    if (!list.length) {
-      throw new RangeError('Annotation needs at least one ' + key);
-    }
-    anno[key] = list;
-  }
-  parseResource('target');
-  parseResource('body');
+  util.parseResource('target');
+  util.parseResource('body');
   anno.target.forEach(EX.sanityCheckTarget);
 
-  function neStrList(key) {
-    const list = arrayOfTruths.ifAny(
-      mustPopInput('ary | nonEmpty str | undef', key));
-    if (!list) { return ''; }
-    // ^-- using empty string b/c it's false-y but still supports .includes().
-    list.forEach((x, i) => mustBe.nest(key + '[' + i + ']', x));
-    anno[key] = list;
-    return list;
-  }
-
-  const typeDecl = neStrList('type');
+  const typeDecl = util.neStrList('type');
   if (!typeDecl.includes('Annotation')) {
     throw new Error('Field "type" must include "Annotation".');
   }
 
-  const motivations = neStrList('motivation');
-  const inReplyTo = neStrList('as:inReplyTo');
+  const motivations = util.neStrList('motivation');
+  const inReplyTo = util.neStrList('as:inReplyTo');
 
   const motiReply = motivations.includes('replying');
   if (motiReply && (!inReplyTo.length)) {
@@ -99,14 +86,49 @@ const EX = function parseSubmittedAnno(mustPopInput, cfg) {
     throw new Error(msg);
   }
 
-  unpackSingleElementArrays.forEach(function maybe(k) {
-    const v = anno[k];
-    if (Array.isArray(v) && (v.length === 1)) { [anno[k]] = v; }
-  });
+  potentialSingleElementArraysToUnpack.forEach(util.unpackSingleElementArray);
 
   mustPopInput.expectEmpty('Unsupported annotation field');
   fixLocalUrlFieldsInplace(cfg, anno);
   return anno;
+};
+
+
+EX.util = {
+
+  copy(utilCtx, key, rule) {
+    const { anno, mustPopInput } = utilCtx;
+    const val = mustPopInput(rule, key);
+    if (val !== undefined) { anno[key] = val; }
+  },
+
+  neStrList(utilCtx, key) {
+    const { anno, mustPopInput } = utilCtx;
+    const list = arrayOfTruths.ifAny(
+      mustPopInput('ary | nonEmpty str | undef', key));
+    if (!list) { return ''; }
+    // ^-- using empty string b/c it's false-y but still supports .includes().
+    list.forEach((x, i) => mustBe.nest(key + '[' + i + ']', x));
+    anno[key] = list;
+    return list;
+  },
+
+  parseResource(utilCtx, key) {
+    const { anno, mustPopInput } = utilCtx;
+    const spec = mustPopInput('obj | ary | nonEmpty str | undef', key);
+    const list = arrayOfTruths(spec).map(maybeWrapId);
+    if (!list.length) {
+      throw new RangeError('Annotation needs at least one ' + key);
+    }
+    anno[key] = list;
+  },
+
+  unpackSingleElementArray(utilCtx, k) {
+    const { anno } = utilCtx;
+    const v = anno[k];
+    if (Array.isArray(v) && (v.length === 1)) { [anno[k]] = v; }
+  },
+
 };
 
 
