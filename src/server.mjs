@@ -83,7 +83,6 @@ const EX = async function createServer(customConfig) {
   });
   app.use(rootRouter);
   app.use(fallbackErrorHandler.decide(popCfg, webSrv));
-  webSrv.on('request', app);
 
   const srv = {
     popCfg,
@@ -116,6 +115,7 @@ const EX = async function createServer(customConfig) {
     ...loggingUtil.requestExtras,
   });
 
+  webSrv.on('request', app);
   return srv;
 };
 
