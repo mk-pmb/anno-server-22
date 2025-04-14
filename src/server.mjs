@@ -51,7 +51,18 @@ const EX = async function createServer(customConfig) {
   console.debug('Server config:', entireConfig);
   const popCfg = objPop(entireConfig, { mustBe }).mustBe;
   popCfg('str | eeq:false', 'envcfg_prefix');
-  const configFiles = await configFilesAdapter.make({ popCfg });
+  const srv = {
+    popCfg,
+
+    initialConfigDone() {
+      popCfg.expectEmpty('Unsupported server config option(s)');
+      srv.popCfg = EX.denyLateConfigRead;
+    },
+
+    configFiles: await configFilesAdapter.make({ popCfg }),
+
+    ...loggingUtil.basics,
+  };
 
   await parseRequestBody.init({
     uploadSizeLimit: popCfg('str | undef', 'upload_size_limit'),
@@ -84,20 +95,10 @@ const EX = async function createServer(customConfig) {
   app.use(rootRouter);
   app.use(fallbackErrorHandler.decide(popCfg, webSrv));
 
-  const srv = {
-    popCfg,
-
-    initialConfigDone() {
-      popCfg.expectEmpty('Unsupported server config option(s)');
-      srv.popCfg = EX.denyLateConfigRead;
-    },
-
-    configFiles,
+  Object.assign(srv, {
     getLowLevelWebServer() { return webSrv; },
     getRootRouter() { return rootRouter; },
-
-    ...loggingUtil.basics,
-  };
+  });
   await installListenAddrPlumbing(srv);
 
   srv.rssFeeds = await prepareRssFeedsConfig(srv);
