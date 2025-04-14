@@ -51,6 +51,7 @@ const EX = async function createServer(customConfig) {
   console.debug('Server config:', entireConfig);
   const popCfg = objPop(entireConfig, { mustBe }).mustBe;
   popCfg('str | eeq:false', 'envcfg_prefix');
+  const configFiles = await configFilesAdapter.make({ popCfg });
 
   await parseRequestBody.init({
     uploadSizeLimit: popCfg('str | undef', 'upload_size_limit'),
@@ -92,14 +93,14 @@ const EX = async function createServer(customConfig) {
       srv.popCfg = EX.denyLateConfigRead;
     },
 
-    getRootRouter() { return rootRouter; },
+    configFiles,
     getLowLevelWebServer() { return webSrv; },
+    getRootRouter() { return rootRouter; },
 
     ...loggingUtil.basics,
   };
   await installListenAddrPlumbing(srv);
 
-  srv.configFiles = await configFilesAdapter.make({ popCfg });
   srv.rssFeeds = await prepareRssFeedsConfig(srv);
   srv.services = await servicesAdapter.make(srv);
   srv.lusrmgr = await lusrmgr.make(srv);
