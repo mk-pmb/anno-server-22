@@ -123,13 +123,12 @@ const EX = {
         const isoDateVal = (new Date(val)).toISOString();
         stamps.push({ st_type: stampType, st_at: isoDateVal });
       });
-      const parsed = parseSubmittedAnno(pop, {
-        ...minimumConfig,
-        extraCopyFields: {
-          [miscMetaFieldInfos.doiStampName]: 'undef | nonEmpty str',
-          created: 'nonEmpty str',
-        },
-      });
+      const parseCfg = { ...minimumConfig };
+      parseCfg.extraCopyFields = {
+        [miscMetaFieldInfos.doiStampName]: 'undef | nonEmpty str',
+        created: 'nonEmpty str',
+      };
+      const parsed = parseSubmittedAnno(pop, parseCfg);
       // const createdTimeJs = new Date(parsed.created)).getTime();
       return parsed;
     }
