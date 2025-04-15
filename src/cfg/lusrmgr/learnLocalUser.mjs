@@ -19,7 +19,7 @@ function initEmptyUserRecord() {
 }
 
 
-const EX = async function learnLocalUser(ctx, userName, mustPopDetail) {
+async function learnOneLocalUser(ctx, userName, mustPopDetail) {
   const { mgr } = ctx;
   const userDetails = mgr.users.getOrInit(userName, null, initEmptyUserRecord);
   const subCtx = { ...ctx, userName, userDetails };
@@ -34,10 +34,11 @@ const EX = async function learnLocalUser(ctx, userName, mustPopDetail) {
     mustPopDetail('undef | ary', 'upstream_userid_aliases'));
 
   mustPopDetail.done('Unsupported user account option(s)');
-};
+}
 
 
-Object.assign(EX, {
+const EX = {
+  learnItem: learnOneLocalUser,
 
   async learnMeta(ctx, mustPopCfgMeta) {
     const { mgr, srv } = ctx;
@@ -64,7 +65,7 @@ Object.assign(EX, {
 
 
 
-});
+};
 
 
 export default EX;
