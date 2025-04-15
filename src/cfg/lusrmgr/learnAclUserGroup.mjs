@@ -3,7 +3,7 @@
 import getOwn from 'getown';
 
 
-const EX = function learnGroup(ctx, grpName, mustPopDetail) {
+function learnOneUserGroup(ctx, grpName, mustPopDetail) {
   const { users } = ctx.mgr;
   const members = mustPopDetail('ary | undef | nul', 'usernames');
   (members || []).forEach(function learn(userName) {
@@ -19,7 +19,8 @@ const EX = function learnGroup(ctx, grpName, mustPopDetail) {
 };
 
 
-Object.assign(EX, {
+const EX = {
+  learnItem: learnOneUserGroup,
 
   async learnMeta(ctx, mustPopCfgMeta) {
     const { cfgDict, mgr } = ctx;
@@ -55,8 +56,7 @@ Object.assign(EX, {
   },
 
 
-
-});
+};
 
 
 export default EX;
