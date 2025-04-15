@@ -30,7 +30,8 @@ const EX = async function learnTopicDict(origCtx, topic, learnImpl) {
   ctx.topicDefaults = (ctx.mergeInheritedFragments(ctx.topicDefaults) || {});
 
   await pProps(cfgDict, async function learnListEntry(origDetails, key) {
-    let det = mergeOpt(ctx.topicDefaults, origDetails || {});
+    let det = origDetails || {};
+    if (typeof det !== 'object') { det = { rawValue: det }; }
     det = ctx.mergeInheritedFragments(det);
     const mustPopDetail = objPop(det, { mustBe }).mustBe;
     await vTry.pr(learnImpl.learnItem || learnImpl,
