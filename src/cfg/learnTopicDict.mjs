@@ -33,7 +33,8 @@ const EX = async function learnTopicDict(origCtx, topic, learnImpl) {
     let det = mergeOpt(ctx.topicDefaults, origDetails || {});
     det = ctx.mergeInheritedFragments(det);
     const mustPopDetail = objPop(det, { mustBe }).mustBe;
-    await vTry.pr(learnImpl, descr + ', entry ' + key)(ctx, key, mustPopDetail);
+    await vTry.pr(learnImpl.learnItem || learnImpl,
+      descr + ', entry ' + key)(ctx, key, mustPopDetail);
   });
 };
 
