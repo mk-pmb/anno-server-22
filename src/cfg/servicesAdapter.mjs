@@ -16,6 +16,11 @@ const isNum = Number.isFinite;
 
 function orf(x) { return x || false; }
 
+const essentialMandatoryBool = 'bool'; /*
+  This alias is just to clarify that these options are so important that
+  we force users to make an explicit choice, so that we are able to detect
+  when their config decision got lost by accidet. */
+
 
 const EX = {
 
@@ -67,8 +72,8 @@ const EX = {
     EX.learnRssFeeds(ctx, svcId, prefixes,
       copy('rssFeeds', 'dictObj | nul | undef'));
     copy('annoBrowserRedirect', 'str | nul | undef');
-    copy('approvalRequired', 'bool | undef', false);
-    copy('autoRequestNextVersionDoi', 'bool | undef', false);
+    copy('approvalRequired', essentialMandatoryBool);
+    copy('autoRequestNextVersionDoi', essentialMandatoryBool);
     copy('staticAclMeta', 'dictObj | nul | undef');
 
     mustPopDetail.expectEmpty('Unsupported leftover service config keys');
