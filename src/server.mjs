@@ -3,6 +3,7 @@
 import absDir from 'absdir';
 import envcfgMergeConfigs from 'envcfg-merge-configs-pmb';
 import express from 'express';
+import makeHookRunner from 'hookrunner25a-pmb';
 import mustBe from 'typechecks-pmb/must-be';
 import nodeHttp from 'http';
 import objPop from 'objpop';
@@ -18,6 +19,7 @@ import loggingUtil from './hnd/util/logging.mjs';
 import lusrmgr from './cfg/lusrmgr/index.mjs';
 import makeGenericCorsHandler from './hnd/util/genericCorsHandler.mjs';
 import parseRequestBody from './hnd/util/parseRequestBody.mjs';
+import pluginsLib from './plugins.mjs';
 import prepareAcl from './acl/prepareAcl.mjs';
 import prepareRssFeedsConfig from './hnd/rss/prepareConfig.mjs';
 import servicesAdapter from './cfg/servicesAdapter.mjs';
@@ -52,6 +54,7 @@ const EX = async function createServer(customConfig) {
   const popCfg = objPop(entireConfig, { mustBe }).mustBe;
   popCfg('str | eeq:false', 'envcfg_prefix');
   const srv = {
+    pathInRepo,
     popCfg,
 
     initialConfigDone() {
@@ -60,9 +63,11 @@ const EX = async function createServer(customConfig) {
     },
 
     configFiles: await configFilesAdapter.make({ popCfg }),
+    runHook: makeHookRunner(),
 
     ...loggingUtil.basics,
   };
+  await pluginsLib.install(srv);
 
   await parseRequestBody.init({
     uploadSizeLimit: popCfg('str | undef', 'upload_size_limit'),
@@ -116,6 +121,7 @@ const EX = async function createServer(customConfig) {
     ...loggingUtil.requestExtras,
   });
 
+  srv.runHook('server/installRequestHandler/before', { app, srv });
   webSrv.on('request', app);
   return srv;
 };
