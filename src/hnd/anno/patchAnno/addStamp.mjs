@@ -8,6 +8,8 @@ import httpErrors from '../../../httpErrors.mjs';
 import lookupExactVersion from '../idGet/lookupExactVersion.mjs';
 import miscMetaFieldInfos from '../miscMetaFieldInfos.mjs';
 import parseDatePropOrFubar from '../../util/parseDatePropOrFubar.mjs';
+import prettyJson from '../../util/prettyJson.mjs';
+
 import stampUtil from '../util/stampUtil.mjs';
 
 import approvalDecisionSideEffects from './approvalDecisionSideEffects.mjs';
@@ -51,7 +53,7 @@ const EX = async function addStamp(ctx) {
       det = libDoi.toUri(doi);
     }
 
-    if (det !== undefined) { stRec.st_detail = JSON.stringify(det); }
+    if (det !== undefined) { stRec.st_detail = prettyJson.sorted(det); }
     mustPopInput.expectEmpty();
     return splat;
   });
