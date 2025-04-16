@@ -3,11 +3,11 @@
 import mapMergeDefaults from 'map-merge-defaults-pmb';
 import pEachSeries from 'p-each-series';
 import randomUuid from 'uuid-random';
-import sortedJson from 'safe-sortedjson';
 
 import detectUserIdentity from '../../../acl/detectUserIdentity.mjs';
 import httpErrors from '../../../httpErrors.mjs';
 import parseRequestBody from '../../util/parseRequestBody.mjs';
+import prettyJson from '../../util/prettyJson.mjs';
 import redundantGenericAnnoMeta from '../redundantGenericAnnoMeta.mjs';
 import sendFinalTextResponse from '../../../finalTextResponse.mjs';
 
@@ -145,7 +145,7 @@ const EX = async function postNewAnno(srv, req) {
     ...dbAddr,
     time_created: fullAnno.created,
     author_local_userid: annoUserId,
-    details: sortedJson(anno),
+    details: prettyJson.sorted(anno),
   };
   // At this point we don't yet have confirmation that our base_id will
   // be accepted. We optimistically pre-generate the stamp and relation
