@@ -44,6 +44,13 @@ function panic(msg) { throw new Error(msg); }
 // function jsonDebug(x) { throw badRequest(JSON.stringify(x, null, 2)); }
 
 
+function prettyJson(x) {
+  let j = sortedJson(x);
+  j = j.replace(/(\n +\{)\n +/g, '$1 ');
+  return j;
+}
+
+
 const EX = async function postNewAnno(srv, req) {
   const parseCfg = {
     publicBaseUrlNoSlash: srv.publicBaseUrlNoSlash,
@@ -142,7 +149,7 @@ const EX = async function postNewAnno(srv, req) {
     ...dbAddr,
     time_created: fullAnno.created,
     author_local_userid: annoUserId,
-    details: sortedJson(anno),
+    details: prettyJson(anno),
   };
   // At this point we don't yet have confirmation that our base ID will
   // be accepted. We optimistically pre-generate the stamp and relation
