@@ -25,6 +25,9 @@ const {
 
 
 function uts2iso(u) { return (new Date((+u || 0) * 1e3)).toISOString(); }
+
+function ores(x) { return x || ''; }
+
 function numOr0(x) { return (+x || 0); }
 function posOr0(n) { return (n > 0 ? n : 0); }
 function nonNegNum(x) { return posOr0(numOr0(x)); }
@@ -55,9 +58,12 @@ const EX = async function multiSearch(ctx) {
   }));
   stopwatch.earlyAcl = Date.now();
 
+  const [outFmtMain, ...outFmtSub] = ores(ctx.outFmt
+    || popUntrustedOpt('fmt')).split(/:/);
   const meta = {
-    outFmt: ctx.outFmt || popUntrustedOpt('fmt') || '',
-    subjTgtSpec: subjTgtSpec || '',
+    outFmtMain,
+    outFmtSub,
+    subjTgtSpec: ores(subjTgtSpec),
   };
 
 
@@ -115,7 +121,7 @@ const EX = async function multiSearch(ctx) {
   let userId = null;
   if (asRoleName === 'author') {
     validRole = true;
-    userId = ((await detectUserIdentity.andDetails(req)).userId || '');
+    userId = ores((await detectUserIdentity.andDetails(req)).userId);
     search.tmpl('visibilityWhere', '#visibilityAuthorMode');
     search.data('rqUserId', userId);
     annoReviverOpts.lowlineStamps = {};
@@ -280,9 +286,7 @@ Object.assign(EX, {
 
   processLimitAndRssOptionsInplace(how) {
     const { ctx, meta, popUntrustedOpt } = how;
-    const apiWantsRss = (ctx.outFmt === 'rss');
-    const requestWantsRss = (meta.outFmt === 'rss');
-    const giveRss = apiWantsRss || requestWantsRss;
+    const giveRss = (ctx.outFmtMain === 'rss');
 
     let max = Infinity;
     if (giveRss) {
@@ -298,27 +302,11 @@ Object.assign(EX, {
 
     if (!giveRss) { return; }
 
-    EX.applyUserRssOptsInplace({ meta, popUntrustedOpt });
     ctx.readContent = 'justTitles';
     // ^- It would be nice if we could also populate the RSS <author> and
     //    <description> fields, but generating them is too much effort.
-  },
 
-
-  applyUserRssOptsInplace(how) {
-    const { meta, popUntrustedOpt } = how;
-    const wantRss = popUntrustedOpt('rss');
-    if (wantRss === undefined) { return; }
-
-    meta.outFmt = 'rss';
-    if (wantRss === true) { return; }
-
-    if (wantRss === 'vh') {
-      meta.rssMode = 'version-history';
-      return;
-    }
-
-    throw noSuchResource('Unsupported RSS mode option(s).');
+    if (ctx.outFmtSub[0] === 'vh') { meta.rssMode = 'version-history'; }
   },
 
 
