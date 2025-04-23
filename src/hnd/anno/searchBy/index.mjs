@@ -67,7 +67,7 @@ async function fmtColl({ srv, req }, annoListPr) {
   const extraTopFields = {
     'skos:note': stopwatchReport,
   };
-  fmtLib.replyToRequest(srv, req, { annos, extraTopFields });
+  fmtLib.replyToRequest({ srv, req, annos, extraTopFields });
 }
 
 

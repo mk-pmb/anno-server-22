@@ -56,11 +56,9 @@ const EX = async function listVersions(ctx) {
   }
 
   const meta = orf(allVisibleVersions.meta);
-  const coll = {
-    annos: allVisibleVersions.map(makePreview),
-    extraTopFields: { 'skos:note': String(meta.stopwatchDurations) },
-  };
-  fmtAnnoCollection.replyToRequest(srv, req, coll);
+  const annos = allVisibleVersions.map(makePreview);
+  const extraTopFields = { 'skos:note': String(meta.stopwatchDurations) };
+  fmtAnnoCollection.replyToRequest({ srv, req, annos, extraTopFields });
 };
 
 
