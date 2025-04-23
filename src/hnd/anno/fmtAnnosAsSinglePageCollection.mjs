@@ -42,10 +42,10 @@ const EX = function fmtAnnosAsSinglePageCollection(how) {
 };
 
 
-function replyToRequest(srv, req, how) {
+function replyToRequest(origHow) {
+  const { srv, req, ...how } = origHow;
   if (!how.canonicalUrl) {
-    const canonicalUrl = plumb.guessOrigReqUrl(srv, req);
-    return replyToRequest(srv, req, { ...how, canonicalUrl });
+    how.canonicalUrl = plumb.guessOrigReqUrl(srv, req);
   }
   return sendFinalTextResponse.json(req, EX(how), EX.jsonReplyOpt);
 }

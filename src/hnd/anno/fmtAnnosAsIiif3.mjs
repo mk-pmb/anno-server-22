@@ -57,10 +57,10 @@ Object.assign(EX, {
     apostrophe. */
 
 
-  replyToRequest(srv, req, origHow) {
-    const { annos, extraTopFields } = origHow;
+  replyToRequest(how) {
+    const { srv, req, annos, extraTopFields } = how;
     mustBe.ary('Annotations list', annos);
-    const canonicalUrl = plumb.guessOrigReqUrl(srv, req);
+    const canonicalUrl = how.canonicalUrl || plumb.guessOrigReqUrl(srv, req);
     mustBe.nest('canonicalUrl', canonicalUrl);
 
     const annoListMeta = orf(annos.meta);
