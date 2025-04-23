@@ -16,6 +16,7 @@ const EX = function fmtAnnosAsSinglePageCollection(how) {
     extraTopFields,
     ...unexpected
   } = how;
+  delete unexpected.untrustedOpt;
   mustBe.keyless('Unexpected options', unexpected);
   mustBe.ary('Annotations list', annos);
   mustBe.nest('canonicalUrl', canonicalUrl);
@@ -35,8 +36,7 @@ const EX = function fmtAnnosAsSinglePageCollection(how) {
       items: annos,
     },
     last: { id: canonicalUrl },
-    ...orf(annos.meta).extraTopFields,
-    ...orf(extraTopFields),
+    ...extraTopFields,
   };
   return coll;
 };

@@ -1,6 +1,7 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
 import getOwn from 'getown';
+import objPop from 'objpop';
 import qrystr from 'qrystr';
 import splitStringOnce from 'split-string-or-buffer-once-pmb';
 
@@ -32,42 +33,31 @@ function apacheSlashes(sub) {
 }
 
 
-const rtrFormatLibs = {
-  '': fmtAnnoCollection,
-  iiif3: fmtAnnosAsIiif3,
-};
-
-
 const EX = async function searchBy(pathParts, req, srv) {
   const [critSpec, ...subPathParts] = pathParts;
   const [criterion, query] = (splitStringOnce(';', critSpec) || [critSpec]);
-  const hnd = getOwn(EX.handlers, criterion);
-  if (!hnd) { throw unsupportedCriterion(); }
+  const searchHnd = getOwn(EX.searchHandlers, criterion);
+  if (!searchHnd) { throw unsupportedCriterion(); }
   const untrustedOpt = (Boolean(query)
     && qrystr.parse(query.replace(/;/g, '&')));
-  return hnd({ req, srv, untrustedOpt }, subPathParts);
+  return searchHnd({ req, srv, untrustedOpt }, subPathParts);
 };
 
 
 async function fmtColl({ srv, req }, annoListPr) {
   const annos = (await annoListPr).toFullAnnos();
-  const { outFmtMain, stopwatchDurations } = annos.meta;
-  const stopwatchReport = String(stopwatchDurations);
+  const { meta } = annos;
+  const popMeta = objPop.d(meta);
+  const extraTopFields = popMeta('extraTopFields') || {};
 
-  if (outFmtMain === 'rss') {
-    const rssOpt = {
-      feedTitle: 'Search',
-      headerHints: stopwatchReport,
-    };
-    return fmtAnnosAsRssFeed({ ...rssOpt, annos, req, srv });
-  }
+  let note = (extraTopFields['skos:note'] || '');
+  if (note) { note += '\n'; }
+  note += String(popMeta('stopwatchDurations'));
+  extraTopFields['skos:note'] = note;
 
-  const fmtLib = getOwn(rtrFormatLibs, outFmtMain || '');
-  if (!fmtLib) { throw outFmtUnsupported(); }
-  const extraTopFields = {
-    'skos:note': stopwatchReport,
-  };
-  fmtLib.replyToRequest({ srv, req, annos, extraTopFields });
+  const fmtHnd = getOwn(EX.outFmtHandlers, meta.outFmtMain || '');
+  if (!fmtHnd) { throw outFmtUnsupported(); }
+  return fmtHnd({ srv, req, annos, extraTopFields });
 }
 
 
@@ -91,10 +81,21 @@ function makeSubPathUrlSearch(pathKey, customOpt) {
 Object.assign(EX, {
 
 
-  handlers: {
+  searchHandlers: {
     has_stamp: makeSubPathUrlSearch('searchAllWithStamp'),
     subject_target: makeSubPathUrlSearch('subjTgtSpec'),
   },
+
+
+  outFmtHandlers: {
+    '': fmtAnnoCollection.replyToRequest,
+    iiif3: fmtAnnosAsIiif3.replyToRequest,
+    rss(how) { return fmtAnnosAsRssFeed({ ...EX.defaultRssOpt, ...how }); },
+  },
+
+
+  defaultRssOpt: { feedTitle: 'Search' },
+
 
 
 });
