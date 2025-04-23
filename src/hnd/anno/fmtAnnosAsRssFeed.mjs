@@ -1,13 +1,13 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
-import arrayOfTruths from 'array-of-truths';
 import dateFmtRfc822 from 'rfc822-date';
+import mapValues from 'lodash.mapvalues';
 import mustBe from 'typechecks-pmb/must-be';
 import xmlenc from 'xmlunidefuse';
 
-import sendFinalTextResponse from '../../finalTextResponse.mjs';
-
 import fmtAnnoRssLink from '../rss/fmtAnnoRssLink.mjs';
+import prettyJson from '../util/prettyJson.mjs';
+import sendFinalTextResponse from '../../finalTextResponse.mjs';
 
 
 function orf(x) { return x || false; }
@@ -29,12 +29,13 @@ const EX = function fmtAnnosAsRssFeed(how) {
   const {
     annos,
     feedTitle,
-    headerHints,
+    extraTopFields,
     linkTpl: origLinkTpl,
     req,
     srv,
     ...unexpected
   } = how;
+  delete unexpected.untrustedOpt;
   mustBe.keyless('Unexpected options', unexpected);
   mustBe.ary('Annotations list', annos);
 
@@ -47,15 +48,14 @@ const EX = function fmtAnnosAsRssFeed(how) {
     '<?xml version="1.0" encoding="utf-8"?>',
     '<rss version="2.0"><channel>',
     xmlStrTag('title', feedTitle || 'Annotations'),
-    ...arrayOfTruths(headerHints).map(h => '  <!-- ' + xmlenc(h) + ' -->'),
+    ...Object.values(mapValues(extraTopFields, EX.fmtOneExtraTopField)),
     ...annos.filter(Boolean).map(a => ('  <item>\n'
       + xmlStrTag('title', a['dc:title'] || a.title || '(untitled)')
       + xmlStrTag('link', fmtAnnoRssLink(lnk, a, meta))
       + xmlStrTag('pubDate', fmtAnnoRssDate(a[dateFieldName], a))
       + '  </item>')),
     '</channel>',
-    '</rss>',
-    ''].join('\n');
+    '</rss>\n'].filter(Boolean).join('\n');
   return sendFinalTextResponse(req, { text: rss, type: 'rss' });
 };
 
@@ -72,6 +72,15 @@ Object.assign(EX, {
   },
 
   fmtAnnoRssDate,
+
+
+  fmtOneExtraTopField(v, k) {
+    let w = v;
+    if ((w && typeof w) === 'object') { w = prettyJson(v); }
+    return '  <!-- ' + xmlenc(String(k + ': ' + w)) + ' -->';
+  },
+
+
 
 
 });
