@@ -101,6 +101,15 @@ https://anno.ub.uni-heidelberg.de/anno/by/subject_target;fmt=rss;limit=20/https:
 
 
 
+### Option `;fmt=count`
+
+Report the total amount of annotations found,
+but don't print details about the annotations themselves.
+Can be used for quick sanity checks, or for estimating the download size
+(and thus, time) for the full list.
+
+
+
 
 
 

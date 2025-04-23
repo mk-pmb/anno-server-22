@@ -89,6 +89,7 @@ Object.assign(EX, {
 
   outFmtHandlers: {
     '': fmtAnnoCollection.replyToRequest,
+    count: fmtAnnoCollection.replyToRequest,
     iiif3: fmtAnnosAsIiif3.replyToRequest,
     rss(how) { return fmtAnnosAsRssFeed({ ...EX.defaultRssOpt, ...how }); },
   },
