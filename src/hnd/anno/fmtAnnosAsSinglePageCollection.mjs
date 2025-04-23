@@ -44,6 +44,15 @@ const EX = function fmtAnnosAsSinglePageCollection(how) {
 
 function replyToRequest(origHow) {
   const { srv, req, ...how } = origHow;
+  const meta = orf(how.annos.meta);
+
+  if (meta.outFmtMain === 'count') {
+    return sendFinalTextResponse.json(req, {
+      ...how.extraTopFields,
+      total: how.annos.length,
+    }, EX.jsonReplyOpt);
+  }
+
   if (!how.canonicalUrl) {
     how.canonicalUrl = plumb.guessOrigReqUrl(srv, req);
   }
