@@ -77,6 +77,17 @@ function dkpgu_export () {
     --strict-names
     --data-only
     )
+
+  local CHUNK_ROWS=1024
+
+  DUMP_OPT+=(
+    # We need to use INSERT statements because the default mode (COPY/TSV)
+    # cannot represent our custom data type for the versid columns.
+    --rows-per-insert="$CHUNK_ROWS"   # disables column names, so we have to…
+    --column-inserts                  # … re-enable them.
+
+    )
+
   dkpgu_psql_dfopt pg_dump "${DUMP_OPT[@]}" "$@";
 }
 
