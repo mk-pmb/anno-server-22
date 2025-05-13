@@ -14,6 +14,7 @@ import fallbackErrorHandler from './hnd/fallbackErrorHandler.mjs';
 import installGlobalRequestExtras from './hnd/globalRequestExtras.mjs';
 import installListenAddrPlumbing from './listenAddrPlumbing.mjs';
 import installRootRoutes from './hnd/rootRoutes.mjs';
+import libDebugFlags from './cfg/debugFlags.mjs';
 import loggingUtil from './hnd/util/logging.mjs';
 import lusrmgr from './cfg/lusrmgr/index.mjs';
 import makeGenericCorsHandler from './hnd/util/genericCorsHandler.mjs';
@@ -31,6 +32,7 @@ const defaultConfig = {
   envcfg_prefix: 'anno_',
   db: dbAdapter.getConfigDefaults(),
   cfgfiles: configFilesAdapter.getConfigDefaults(),
+  debug_flags: '',
 
   listen_addr: '127.0.0.1:33321',
   notify_server_listening: '',
@@ -48,8 +50,13 @@ const defaultConfig = {
 const EX = async function createServer(customConfig) {
   const entireConfig = envcfgMergeConfigs({ ifPrefixProp: 'envcfg_prefix' },
     defaultConfig, customConfig);
+  const popCfg = objPop.d(entireConfig, { mustBe }).mustBe;
+  const serverDebugFlags = libDebugFlags.parseStr(popCfg('str | undef',
+    'debug_flags'));
   console.debug('Server config:', entireConfig);
-  const popCfg = objPop(entireConfig, { mustBe }).mustBe;
+  if (serverDebugFlags) {
+    console.warn('W: SERVER DEBUG FLAGS ENABLED!', serverDebugFlags);
+  }
   popCfg('str | eeq:false', 'envcfg_prefix');
   const srv = {
     popCfg,
@@ -60,6 +67,7 @@ const EX = async function createServer(customConfig) {
     },
 
     configFiles: await configFilesAdapter.make({ popCfg }),
+    serverDebugFlags,
 
     ...loggingUtil.basics,
   };
@@ -113,6 +121,7 @@ const EX = async function createServer(customConfig) {
     confirmCors() { return confirmCorsImpl(this); },
     getDb() { return srv.db; },
     getSrv() { return srv; },
+    serverDebugFlags,
     ...loggingUtil.requestExtras,
   });
 
