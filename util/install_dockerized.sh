@@ -126,13 +126,8 @@ function dinst_configure_npm () {
 
 
 function dinst_maybe_install_extras () {
-  if [ ! -d /extras ]; then
-    echo D: 'No extras directory is mounted. Skip.'
-    return 0
-  fi
-
   local PKGDIR= DESCR=
-  for PKGDIR in /extras/*/package.json; do
+  for PKGDIR in {plugins,/extras}/*/package.json; do
     [ -f "$PKGDIR" ] || continue
     PKGDIR="${PKGDIR%/*}"
     DESCR="$(basename -- "$PKGDIR")"

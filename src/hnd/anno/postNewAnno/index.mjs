@@ -49,7 +49,7 @@ const EX = async function postNewAnno(srv, req) {
     publicBaseUrlNoSlash: srv.publicBaseUrlNoSlash,
   };
   const anno = await parseRequestBody.fancy('json', req,
-  ).then(ctx => ctx.catchBadInput(parseSubmittedAnno, parseCfg));
+  ).then(ctx => ctx.catchBadInput(parseSubmittedAnno, srv, parseCfg));
   const tgtCateg = categorizeTargets(srv, anno,
     { errInvalidAnno: badRequest });
   const {

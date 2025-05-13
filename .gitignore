@@ -1,7 +1,14 @@
 
 # Host-specific stuff
 /*.@*
+# The .@ naming scheme is meant to be used with a hostname after the `@`,
+# but that's mostly up to you. Using the expected hostname is relevant
+# only for `cfg.@…`, and logs will be written to `logs.@…` + hostname.
+
+/addons
 /doibot
+/extra
+/plugins
 
 
 

@@ -128,7 +128,8 @@ const EX = {
         [miscMetaFieldInfos.doiStampName]: 'undef | nonEmpty str',
         created: 'nonEmpty str',
       };
-      const parsed = parseSubmittedAnno(pop, parseCfg);
+      const stubSrv = { runHook: Boolean };
+      const parsed = parseSubmittedAnno(pop, stubSrv, parseCfg);
       // const createdTimeJs = new Date(parsed.created)).getTime();
       return parsed;
     }
