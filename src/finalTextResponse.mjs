@@ -4,8 +4,6 @@ import genericFTR from 'express-final-text-response-pmb';
 import loggers from 'express-final-text-response-pmb/extras/req.logCkp.mjs';
 
 
-const debugFxPreferPlainText = process.env.as22_debugfx_mime_annold_plain_text;
-
 const permaFtrOpt = {
   ...loggers,
   knownMimeTypes: {
@@ -27,7 +25,7 @@ function debugFxDecidePlainText(req, opt) {
     string instead and won't show the anno.
     */
   if (opt.type && (opt.type !== 'annoLD')) { return; }
-  if (debugFxPreferPlainText) { return true; }
+  if (req.serverDebugFlags.mimeAnnoLdPlainText) { return true; }
   if (req.untrustedDebugOpt().text) { return true; }
 }
 
