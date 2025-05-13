@@ -9,6 +9,7 @@ import fmtAnnoCollection from '../fmtAnnosAsSinglePageCollection.mjs';
 import fmtAnnosAsIiif3 from '../fmtAnnosAsIiif3.mjs';
 import fmtAnnosAsRssFeed from '../fmtAnnosAsRssFeed.mjs';
 import httpErrors from '../../../httpErrors.mjs';
+import sendFinalTextResponse from '../../../finalTextResponse.mjs';
 
 import multiSearch from './multiSearch.mjs';
 
@@ -19,6 +20,9 @@ const missingCriterionParam = httpErrors.noSuchResource.explain(
   'Search criterion requires a parameter.').throwable;
 const outFmtUnsupported = httpErrors.notImpl.explain(
   'Requested output format is not currently supported.').throwable;
+
+
+function orf(x) { return x || false; }
 
 
 function apacheSlashes(sub) {
@@ -45,6 +49,7 @@ const EX = async function searchBy(pathParts, req, srv) {
 
 
 async function fmtColl(ctx, rawSearchResults) {
+  if (EX.maybeDebugSqlInstead(ctx, rawSearchResults)) { return; }
   const { meta } = rawSearchResults;
   const popMeta = objPop.d(meta);
   const extraTopFields = popMeta('extraTopFields') || {};
@@ -97,6 +102,19 @@ Object.assign(EX, {
 
 
   defaultRssOpt: { feedTitle: 'Search' },
+
+
+  maybeDebugSqlInstead(ctx, rawSearchResults) {
+    const { debugSql } = rawSearchResults.meta;
+    if (!debugSql) { return false; }
+    const info = orf(rawSearchResults.sqlDebugInfo); /*
+      ^-- This will be empty unless the proper server debug flags are set. */
+    let args = JSON.stringify(orf(info.args), null, 2);
+    args = args.replace(/\n\s*/g, ' ');
+    const report = (String(info.query || '') + ' -- args: ' + args + '\n');
+    sendFinalTextResponse(ctx.req, { text: report, type: 'plain' });
+    return true;
+  },
 
 
 

@@ -164,8 +164,6 @@ const EX = async function multiSearch(ctx) {
 
   popUntrustedOpt.expectEmpty();
 
-  // search.debug.dumpDataArgs = true;
-  // search.debug.dumpSqlQuery = true;
   stopwatch.prep = Date.now();
   const found = await search.selectAll(srv);
   stopwatch.db = Date.now();
@@ -313,6 +311,7 @@ Object.assign(EX, {
 
 
 EX.miscUntrustedMetaOptNames = [
+  'debugSql', // <- Report will be empty without the proper server debug flags.
   'just',
   'scaleTargetHeight',
   'scaleTargetWidth',
