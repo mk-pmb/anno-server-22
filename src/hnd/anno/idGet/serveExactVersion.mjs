@@ -22,7 +22,7 @@ const EX = async function serveExactVersion(ctx) {
 
   const { accept } = req.headers;
   const wantText = ((accept || '').startsWith('text/plain,')
-    || req.debugOpt().text);
+    || req.untrustedDebugOpt().text);
   if (wantText) { ftrOpt.type = 'plain'; }
 
   if (req.method === 'HEAD') { return sendFinalTextResponse(req, '', ftrOpt); }
@@ -32,7 +32,7 @@ const EX = async function serveExactVersion(ctx) {
   if (clientPrefersHtml(req)) {
     const redirUrl = browserRedirect.fmtUrl(found, ctx);
     if (redirUrl) {
-      if (req.debugOpt().noredir) {
+      if (req.untrustedDebugOpt().noredir) {
         earlyFields['as22debug:would_redirect_to'] = redirUrl;
       } else {
         ftrOpt.redirTo = redirUrl; /*

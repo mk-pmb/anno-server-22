@@ -35,7 +35,7 @@ Object.assign(EX, {
 
 EX.initialExtras = {
 
-  debugOpt() {
+  untrustedDebugOpt() {
     const req = this;
     let o = req.cachedDebugOpts;
     if (o === undefined) {
@@ -49,7 +49,7 @@ EX.initialExtras = {
 
   nicerRedirect(destUrl) {
     const req = this;
-    if (guessClientPrefersHtml(req) && req.debugOpt().noredir) {
+    if (guessClientPrefersHtml(req) && req.untrustedDebugOpt().noredir) {
       const msg = 'Debug cookie prevented redirect to: <' + destUrl + '>\n';
       return sendFinalTextResponse(req, msg, { type: 'plain' });
     }

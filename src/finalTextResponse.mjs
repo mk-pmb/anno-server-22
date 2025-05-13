@@ -28,7 +28,7 @@ function debugFxDecidePlainText(req, opt) {
     */
   if (opt.type && (opt.type !== 'annoLD')) { return; }
   if (debugFxPreferPlainText) { return true; }
-  if (req.debugOpt().text) { return true; }
+  if (req.untrustedDebugOpt().text) { return true; }
 }
 
 
