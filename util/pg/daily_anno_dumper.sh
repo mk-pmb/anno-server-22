@@ -101,7 +101,7 @@ function dad_run_one_query () {
     # We want our file sorted in a way that we can easily verify to be sorted
     # correctly, to have one more indicator for data rot.
     # Unfortunately, the postgres sorting for equal time_created and equal
-    # base_id differs from busybox's "sort" in ways yet to be understood,
+    # base ID differs from busybox's "sort" in ways yet to be understood,
     # both for version sort and general numeric sort. Since we have a lot of
     # same-millisecond clusters (see goodies/time_created_clusters.sql),
     # it's infeasible to just tweak them a little here and there.
@@ -124,19 +124,19 @@ function dad_gen_one_query () {
   local QRY_NAME="$1"
   local SQL="
     SELECT json_build_array(<date_col>,
-      base_id || '~' || version_num<extra_cols>
+      (versid).baseid || '~' || (versid).vernum<extra_cols>
     ) || ');' AS \"$QRY_NAME\" FROM <from>
     WHERE <date_col> > '$ANNOS_AFTER'::timestamptz$(
       ) - INTERVAL '$TIMESPAN_MARGIN'<extra_where>
     "
     # Sorting here wouldn't be verifiable, see above.
-    # -- ORDER BY <date_col> ASC, base_id ASC, version_num ASC
+    # -- ORDER BY <date_col> ASC, (versid).baseid ASC, (versid).vernum ASC
   SQL="${SQL//$'\n'    /$'\n'}"
   SQL="${SQL#$'\n'}"
   SQL="${SQL%$'\n'}"
   case "$QRY_NAME" in
     anno )
-      SQL="${SQL//<from>/anno_disclosed NATURAL JOIN anno_data}"
+      SQL="${SQL//<from>/anno_disclosed JOIN anno_data USING (versid)}"
       SQL="${SQL//<date_col>/time_created}"
       SQL="${SQL//<extra_cols>/, details}"
       SQL="${SQL//<extra_where>/}"
@@ -148,7 +148,7 @@ function dad_gen_one_query () {
       SQL="${SQL//<extra_where>/" AND st_type = 'as:deleted'"}"
       ;;
     stamp )
-      SQL="${SQL//<from>/anno_disclosed NATURAL JOIN anno_stamps}"
+      SQL="${SQL//<from>/anno_disclosed JOIN anno_stamps USING (versid)}"
       SQL="${SQL//<date_col>/st_at}"
       SQL="${SQL//<extra_cols>/, st_type, st_effts, st_detail}"
       SQL="${SQL//<extra_where>/" AND st_type <> 'as:deleted'"}"

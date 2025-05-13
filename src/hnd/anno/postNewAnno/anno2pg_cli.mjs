@@ -142,17 +142,17 @@ const EX = {
     const { baseId, versNum } = parseVersId.fromLocalUrl(minimumConfig,
       Error, mustBe.nest('Anno ID URL', anno.id));
     if (!versNum) { throw new Error('Anno ID URL must include version!'); }
-    const idParts = { base_id: baseId, version_num: versNum };
     const annoCreatedTime = mustBe.nest('Anno creation time', anno.created);
+    const dbAddr = { versid: [Array, baseId, versNum] };
     const stampDefaults = {
-      ...idParts,
+      ...dbAddr,
       st_at: annoCreatedTime || isoDateNow,
       st_by: annoUser || '',
     };
 
     const dbr = EX.dbRecords;
     dbr.data.push({
-      ...idParts,
+      ...dbAddr,
       time_created: annoCreatedTime,
       author_local_userid: annoUser,
       details: sortedJson(anno, { space: 0 }),

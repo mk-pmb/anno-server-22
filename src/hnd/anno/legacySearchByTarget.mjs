@@ -16,15 +16,14 @@ const EX = async function legacySearchByTarget(srv, req, origTargetSpec) {
 
 
 const queryTpl = ([
-  'base_id',
-  'version_num',
+  'versid',
   'details',
 ].map(f => 'data.' + f).join(', ') + `
   FROM anno_links AS links
   INNER JOIN anno_data AS data
     ON links.rel = 'subject'
     AND links.url = $1
-    AND data.base_id = links.base_id
+    AND (data.versid).baseid = (links.versid).baseid
 `).trim();
 
 
@@ -33,10 +32,9 @@ Object.assign(EX, {
   queryTpl,
 
   recombineAnno(srv, rec) {
-    const idParts = {
-      baseId: rec.base_id,
-      versNum: rec.version_num,
-    };
+    console.warn('legacySearchByTarget: recombineAnno:', rec);
+    const [baseId, versNum] = rec.versid;
+    const idParts = { baseId, versNum };
     const fullAnno = redundantGenericAnnoMeta.add(srv, idParts, rec.details);
     return fullAnno;
   },

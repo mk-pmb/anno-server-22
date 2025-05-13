@@ -1,5 +1,5 @@
 { "name": "anno-server-22",
-  "version": "1.0.2505120801",
+  "version": "1.0.2505120802",
   "description": "Accepts and serves annotations in our flavor of the W3C Web Annotation Protocol and W3C Web Annotation Data Model.",
   "keywords": [
     "annotation",
@@ -80,7 +80,7 @@
     "p-props": "^4.0.0",
     "pg": "^8.7.3",
     "pify": "^5.0.0",
-    "postgres-dump-writer-helpers-220524-pmb": "^0.3.2",
+    "postgres-dump-writer-helpers-220524-pmb": "^0.3.3",
     "postgres-pool-pmb": "^0.1.2",
     "qrystr": "^0.1.5",
     "read-data-file": "^2.0.11",

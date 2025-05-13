@@ -26,17 +26,17 @@ const EX = async function findLatestVersionNums(ctx) {
 
 (function compileTpl() {
   const unapStamp = miscMetaFieldInfos.unapprovedStampName;
-  const coal = 'SELECT COALESCE(MAX(version_num)::smallint, 0) FROM av';
+  const coal = 'SELECT COALESCE(MAX((versid).vernum)::smallint, 0) FROM av';
   const main = `
     WITH av AS (
-      SELECT da.base_id, da.version_num,
+      SELECT da.versid,
         da.author_local_userid AS user,
         (unap.st_type IS NULL) AS disclosed
       FROM anno_data AS da
       LEFT JOIN anno_stamps AS unap ON unap.st_type = '${unapStamp}'
         AND ${miscSql.annoExactVerCond('da', 'unap')}
-      WHERE da.base_id = $1
-      ORDER BY da.version_num ASC
+      WHERE (da.versid).baseid = $1
+      ORDER BY (da.versid).vernum ASC
     ) SELECT (${coal}) AS max,
     (${coal} WHERE disclosed) AS dis`;
   EX.queryTpl = {

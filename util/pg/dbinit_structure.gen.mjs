@@ -24,25 +24,27 @@ wrSql('-- -*- coding: UTF-8, tab-width: 2 -*-\n');
 wrSql('-- $date$ File generated at ' + (new Date()).toString() + '\n');
 
 
-function createSimpleTable(name, fields) {
-  wrSql(pgDumpWriter.fmtCreateSimpleTable(name, fields));
+function createSimpleTable(name, fields, opt, ...unsupp) {
+  if (unsupp.length) { throw new Error('Unsupported extra arguments!'); }
+  wrSql(pgDumpWriter.fmtCreateSimpleTable(name, fields, opt));
 }
 
 
 const { schemaName } = pgDumpWriter.fmtCreateSimpleTable.dfOpt;
-
-
-const annoAddrTypes = {
-  base_id: 'char*',
-  version_num: 'smallint',
-};
-
-const annoAddrUniq = loMapValues(annoAddrTypes, v => v + ' ¹addr');
-
 const indexColumnFlag = ' B'; // btree
 
+
+const annoDataOpt = {
+  primKeyName: 'versid',
+  primKeyType: 'public.anno_version_id',
+};
+
+const annoAddrTypes = {
+  [annoDataOpt.primKeyName]: annoDataOpt.primKeyType,
+};
+const annoAddrUniq = loMapValues(annoAddrTypes, v => v + ' ¹addr');
+
 const annoDataFields = {
-  ...annoAddrUniq,
   time_created: 'ts',
   author_local_userid: 'char* B',
   details: 'json',
@@ -50,10 +52,10 @@ const annoDataFields = {
 
 
 const visibilityViews = (function compile() {
-  const colsGlued = 'base_id, version_num';
+  const colsGlued = 'versid';
   const selCols = 'SELECT ' + colsGlued + ' FROM ';
   const wrapOrder = [].join.bind(['SELECT * FROM (\n',
-    '\n) AS input ORDER BY base_id ASC, version_num ASC']);
+    '\n) AS input ORDER BY versid ASC']);
   const stampType = selCols + 'anno_stamps WHERE st_type ';
   const unappSt = `${stampType}= '${externalDefs.unappStamp}'`;
   return {
@@ -95,13 +97,13 @@ const views = { // in order of creation – will be dropped in reverse order.
       ORDER BY st_type ASC
       ) AS stamps, MAX(st_at) AS latest_st_at
     FROM anno_stamps
-    GROUP BY base_id, version_num
+    GROUP BY versid
     `),
 
   anno_subjtargets_json: `
-    SELECT base_id, version_num,
+    SELECT versid,
       json_agg(DISTINCT url) AS subject_target_rel_urls
-    FROM anno_links WHERE rel = 'subject' GROUP BY base_id, version_num
+    FROM anno_links WHERE rel = 'subject' GROUP BY versid
     `,
 
   anno_dois: (function compile() {
@@ -114,7 +116,7 @@ const views = { // in order of creation – will be dropped in reverse order.
       WITH extracted AS (
         -- Extract both ways a DOI can be assigned: In data, and as stamp.
         SELECT st.st_detail::text AS st_ident${dataRowsGlued}
-        FROM anno_data AS da NATURAL LEFT JOIN anno_stamps AS st
+        FROM anno_data AS da LEFT JOIN anno_stamps AS st USING (versid)
         WHERE ( st.st_type = '${doiStampName}' OR st.st_type IS NULL )
         ), combined AS (
         -- Find the stronger DOI assignment.
@@ -137,8 +139,12 @@ const views = { // in order of creation – will be dropped in reverse order.
 Object.keys(views).reverse().forEach(
   name => wrSql('DROP VIEW IF EXISTS "' + schemaName + '"."' + name + '";'));
 
+wrSql('DROP TYPE IF EXISTS ' + annoDataOpt.primKeyType + ' CASCADE;');
+wrSql('CREATE TYPE ' + annoDataOpt.primKeyType + ' AS ('
+  + '\n    baseid character varying,'
+  + '\n    vernum smallint);');
 
-createSimpleTable('anno_data', annoDataFields);
+createSimpleTable('anno_data', annoDataFields, annoDataOpt);
 
 
 createSimpleTable('anno_links', {
@@ -170,7 +176,7 @@ loMapValues(views, function createView(recipe, name) {
 });
 
 
-wrSql('\n-- End of generated DB structure initialization file. --');
+wrSql('\nSELECT \'Done.\' AS "DB structure initialization:";');
 outputSql = outputSql.trim();
 
 const fails = [];
