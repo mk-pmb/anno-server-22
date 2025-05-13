@@ -44,9 +44,8 @@ const EX = async function searchBy(pathParts, req, srv) {
 };
 
 
-async function fmtColl({ srv, req }, annoListPr) {
-  const annos = (await annoListPr).toFullAnnos();
-  const { meta } = annos;
+async function fmtColl(ctx, rawSearchResults) {
+  const { meta } = rawSearchResults;
   const popMeta = objPop.d(meta);
   const extraTopFields = popMeta('extraTopFields') || {};
 
@@ -57,7 +56,8 @@ async function fmtColl({ srv, req }, annoListPr) {
 
   const fmtHnd = getOwn(EX.outFmtHandlers, meta.outFmtMain || '');
   if (!fmtHnd) { throw outFmtUnsupported(); }
-  return fmtHnd({ srv, req, annos, extraTopFields });
+  const annos = rawSearchResults.toFullAnnos();
+  return fmtHnd({ ...ctx, annos, extraTopFields });
 }
 
 
@@ -68,10 +68,11 @@ function makeSubPathUrlSearch(pathKey, customOpt) {
     rssMaxItems: -1,
     ...customOpt,
   };
-  const f = function subPathUrlSearch(ctx, subPathParts) {
+  const f = async function subPathUrlSearch(ctx, subPathParts) {
     const sub = apacheSlashes(subPathParts);
     if (!sub) { throw missingCriterionParam(); }
-    return fmtColl(ctx, multiSearch({ ...ctx, ...opt, [pathKey]: sub }));
+    const found = await multiSearch({ ...ctx, ...opt, [pathKey]: sub });
+    return fmtColl(ctx, found);
   };
   Object.assign(f, { pathKey });
   return f;
