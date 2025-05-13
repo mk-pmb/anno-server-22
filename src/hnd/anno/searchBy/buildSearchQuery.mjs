@@ -65,7 +65,6 @@ EX.api = {
       ...bsq.templates,
       nowUts: Math.floor(Date.now() / 1e3),
     };
-    const { debug } = bsq;
     let query = slotTpl(bsq.seed, /#([A-Za-z]\w*)/g, tpl);
     query = query.replace(/\s+\r/g, '');
     query = query.replace(/\s+\n/g, '\n').trim();
@@ -73,12 +72,6 @@ EX.api = {
     query = slotTpl(query, /\$([A-Za-z]\w*)/g,
       mapObjValues(bsq.dataSlots, numb), { reportUnused: 'error' });
     const args = numb.values;
-    if (debug.dumpDataArgs) {
-      EX.validateDbQueryArgTypes('Search query data list ', args);
-    }
-    if (debug.dumpSqlQuery) {
-      setTimeout(() => console.debug('built SQL:', query, args), 10);
-    }
     return { query, args };
   },
 
@@ -89,8 +82,10 @@ EX.api = {
 
 
   async selectAll(bsq, srv) {
-    const { query, args } = bsq.buildSql();
+    const built = bsq.buildSql();
+    const { query, args } = built;
     const found = await srv.db.postgresSelect(query, args);
+    if (srv.serverDebugFlags.reportSqlQueries) { found.sqlDebugInfo = built; }
     return found;
   },
 

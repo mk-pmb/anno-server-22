@@ -110,6 +110,17 @@ Can be used for quick sanity checks, or for estimating the download size
 
 
 
+### Option `;debugSql`
+
+Requests information about the SQL query that would have been executed
+to answer this request if the option would have been omitted.
+By default, the report will only show empty placeholders.
+To get useful data instead, the server debug flag `reportSqlQueries`
+must be enabled, which should be used only in protected test environments,
+as it may disclose unintended secrets.
+
+
+
 
 
 
