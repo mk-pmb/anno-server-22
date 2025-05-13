@@ -2,8 +2,7 @@
 
 const EX = {
 
-  annoExactVerCond: (a, b, c) => (`${a}.base_id = ${b}.base_id `
-    + `AND ${a}.version_num = ${b}.${c || 'version_num'}`),
+  annoExactVerCond: (a, b) => `${a}.versid = ${b}.versid`,
 
 
   joinStampEffUts0(joinAs, stType) {

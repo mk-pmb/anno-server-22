@@ -230,9 +230,9 @@ Object.assign(EX, {
       const subj = rec.subject_target_rel_urls;
       if (subj) { return subj; }
       if (!rec.details) {
-        const msg = `No details for annotation with ID ${
-          rec.base_id} v${rec.version_num} while checking privileges {${
-          privNames.join(', ')}}`;
+        const [baseId, versNum] = rec.versid;
+        const msg = `No details for annotation with ID ${baseId} v${
+          versNum} while checking privileges {${privNames.join(', ')}}`;
         throw new Error(msg);
       }
       return categorizeTargets(srv, rec.details,
@@ -256,7 +256,11 @@ Object.assign(EX, {
 
 
   resultToFullAnno(srv, opts, rec) {
-    const idParts = { baseId: rec.base_id, versNum: rec.version_num };
+    const idParts = { baseId: rec.base_id, versNum: rec.version_num }; /*
+      Unfortunately, rec.versid is a plain string with a format like
+      '(unquoted-base-id,1)', so we'd need to actually parse it to use that.
+      Fortunately, we've already extracted its parts into separate columns. */
+
     const { lowlineStamps } = opts;
     const stamps = parseStampRows(rec.stamps, { lowlineStamps });
     // console.debug('rec:', rec, 'stamps:', stampInfos);

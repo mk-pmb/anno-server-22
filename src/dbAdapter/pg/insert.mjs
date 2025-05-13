@@ -3,8 +3,6 @@
 import mustBe from 'typechecks-pmb/must-be';
 import pgDumpWriter from 'postgres-dump-writer-helpers-220524-pmb';
 
-const { quoteId } = pgDumpWriter;
-
 function callIfTruthy(f, ...a) { return f && f(...a); }
 
 
@@ -17,10 +15,7 @@ async function postgresInsertOneRecord(table, rec, origOpt) {
     throw new Error('Empty record for insert into table ' + table);
   }
   const slots = [];
-  function slotify(x) { return '$' + slots.push(x); }
-  const query = ('INSERT INTO ' + quoteId(table) + ' ('
-    + keys.map(quoteId).join(', ') + ') VALUES ('
-    + Object.values(rec).map(slotify).join(', ') + ');');
+  const query = pgDumpWriter.fmtInsert(rec, { TABLE: table, SLOTS: slots });
   // console.debug('pg insert: ', query);
 
   try {

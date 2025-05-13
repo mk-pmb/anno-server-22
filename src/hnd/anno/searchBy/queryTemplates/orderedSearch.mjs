@@ -1,16 +1,14 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
-function padIf(b, x, a) { return (x ? b + x + (a || '') : ''); }
-
 function defaultSearchOrder(sourcePrefix) {
-  const a = padIf('"', sourcePrefix, '".') + '"';
-  const b = '" #orderByTimeDirection';
-  const l = [
-    'time_created',
-    'base_id',
-    'version_num',
+  const b = ' #orderByTimeDirection';
+  let l = [
+    'time_created' + b,
+    '(versid).baseid ASC',
+    '(versid).vernum' + b,
   ];
-  return l.join(', ').replace(/\w+/g, m => a + m + b);
+  if (sourcePrefix) { l = l.map(x => sourcePrefix + '.' + x); }
+  return l.join(', ');
 }
 
 
@@ -20,11 +18,11 @@ const EX = {
 
   orderedSearch: `
     WITH found AS (
-      #|
-    ) SELECT * FROM found
+      #|\r )
+    SELECT * FROM found
     ORDER BY #orderedSearchPrioritize #orderedSearchDefaultOrderNoPrefix
     LIMIT #orderedSearchLimit
-    `.trim(),
+    `.replace(/^ {2}/mg, ''),
 
   orderedSearchSource: '#unrestrictedSearch',
   orderedSearchPrioritize: '',

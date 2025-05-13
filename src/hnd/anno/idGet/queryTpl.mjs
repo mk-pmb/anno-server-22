@@ -2,19 +2,19 @@
 
 const EX = {
   annoDetails: ('details, author_local_userid'
-    + ' FROM anno_data WHERE base_id = $1'
-    + ' AND version_num = $2 LIMIT 2'
+    + ' FROM anno_data WHERE (versid).baseid = $1'
+    + ' AND (versid).vernum = $2 LIMIT 2'
   ),
   annoStamps: ('*'
-    + ' FROM anno_stamps WHERE base_id = $1'
-    + ' AND version_num = $2 LIMIT 2'
+    + ' FROM anno_stamps WHERE (versid).baseid = $1'
+    + ' AND (versid).vernum = $2 LIMIT 2'
   ),
   latestVersion: (
-    'MAX(version_num) AS latest'
-    + ' FROM anno_data WHERE base_id = $1'
+    'MAX((versid).vernum) AS latest'
+    + ' FROM anno_data WHERE (versid).baseid = $1'
   ),
-  allVersions: ('version_num, time_created'
-    + ' FROM anno_data WHERE base_id = $1'
+  allVersions: ('(versid).vernum, time_created'
+    + ' FROM anno_data WHERE (versid).baseid = $1'
   ),
 };
 

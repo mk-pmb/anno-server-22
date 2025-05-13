@@ -136,10 +136,7 @@ const EX = async function postNewAnno(srv, req) {
     return sendFinalTextResponse.json(req, fullAnno, ftrOpt);
   }
 
-  const dbAddr = {
-    base_id: ctx.idParts.baseId,
-    version_num: ctx.idParts.versNum,
-  };
+  const dbAddr = { versid: [Array, ctx.idParts.baseId, ctx.idParts.versNum] };
   const annoUserId = (who.userId || '');
   const dataRec = {
     ...dbAddr,
@@ -147,7 +144,7 @@ const EX = async function postNewAnno(srv, req) {
     author_local_userid: annoUserId,
     details: prettyJson.sorted(anno),
   };
-  // At this point we don't yet have confirmation that our base_id will
+  // At this point we don't yet have confirmation that our base ID will
   // be accepted. We optimistically pre-generate the stamp and relation
   // records anyway, to catch potential errors therein before touching
   // the database.

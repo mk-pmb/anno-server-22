@@ -35,8 +35,7 @@ function popEffTs(pop) {
 
 const EX = async function addStamp(ctx) {
   const stRec = {
-    base_id: ctx.idParts.baseId,
-    version_num: ctx.idParts.versNum,
+    versid: [Array, ctx.idParts.baseId, ctx.idParts.versNum],
     st_effts: null,
     st_detail: null,
   };
