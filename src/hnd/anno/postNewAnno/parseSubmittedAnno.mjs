@@ -40,10 +40,16 @@ const baseUtil = {
 };
 
 
-const EX = function parseSubmittedAnno(mustPopInput, cfg) {
+const EX = async function parseSubmittedAnno(mustPopInput, cfg, psaCtx) {
   const anno = {};
   const util = baseUtil.bindAllTo(EX.util, null, { anno, mustPopInput });
+  const { req } = psaCtx;
+  const srv = req.getSrv();
+  const hookCtx = { anno, cfg, ...baseUtil, ...util, srv, req, tmp: {} };
+  await srv.runHook('submitAnno/parse/before', hookCtx);
+
   redundantGenericAnnoMeta.mustPopAllStatic(mustPopInput);
+  await srv.runHook('submitAnno/parse/extraFields/early', hookCtx);
   alwaysDiscardFields.forEach(k => mustPopInput('any', k));
 
   verbatimCopyKeysMandatedByProtocol.forEach(k => util.copy(k, 'str | undef'));
@@ -88,8 +94,11 @@ const EX = function parseSubmittedAnno(mustPopInput, cfg) {
 
   potentialSingleElementArraysToUnpack.forEach(util.unpackSingleElementArray);
 
+  await srv.runHook('submitAnno/parse/extraFields/late', hookCtx);
   mustPopInput.expectEmpty('Unsupported annotation field');
+
   fixLocalUrlFieldsInplace(cfg, anno);
+  await srv.runHook('submitAnno/parse/after', hookCtx);
   return anno;
 };
 

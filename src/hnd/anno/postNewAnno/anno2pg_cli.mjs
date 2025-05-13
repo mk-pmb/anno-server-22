@@ -20,6 +20,9 @@ import fmtRelRecs from './fmtRelRecs.mjs';
 import parseSubmittedAnno from './parseSubmittedAnno.mjs';
 
 
+const builtinDoNothingFunc = Boolean;
+
+
 const EX = {
 
   defaultMainTimer: setTimeout(() => EX.cliMain(), 10),
@@ -128,7 +131,8 @@ const EX = {
         [miscMetaFieldInfos.doiStampName]: 'undef | nonEmpty str',
         created: 'nonEmpty str',
       };
-      const parsed = parseSubmittedAnno(pop, configStubForPSA);
+      const serverStub = { runHook: builtinDoNothingFunc };
+      const parsed = parseSubmittedAnno(pop, serverStub, configStubForPSA);
       // const createdTimeJs = new Date(parsed.created)).getTime();
       return parsed;
     }

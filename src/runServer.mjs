@@ -50,6 +50,7 @@ const exitSoonSignalNames = [
       exitSoon * 1e3).unref();
   }
 
+  srv.runHook('server/initialConfig/late');
   srv.initialConfigDone();
   await srv.listen();
 }());

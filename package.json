@@ -1,5 +1,5 @@
 { "name": "anno-server-22",
-  "version": "1.0.2504161800",
+  "version": "1.0.2505120800",
   "description": "Accepts and serves annotations in our flavor of the W3C Web Annotation Protocol and W3C Web Annotation Data Model.",
   "keywords": [
     "annotation",
@@ -58,6 +58,7 @@
     "fix-unicode-strings-deeply-inplace-pmb": "^0.1.0",
     "getoraddkey-simple": "^0.1.7",
     "getown": "^1.0.1",
+    "hookrunner25a-pmb": "^0.1.1",
     "is-string": "^1.0.7",
     "lodash.mapkeys": "^4.6.0",
     "lodash.mapvalues": "^4.6.0",
