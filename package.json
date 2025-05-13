@@ -1,5 +1,5 @@
 { "name": "anno-server-22",
-  "version": "1.0.2505120800",
+  "version": "1.0.2505120801",
   "description": "Accepts and serves annotations in our flavor of the W3C Web Annotation Protocol and W3C Web Annotation Data Model.",
   "keywords": [
     "annotation",
@@ -56,7 +56,7 @@
     "express-promise-router": "^4.1.1",
     "express-timeout-handler": "^2.2.2",
     "fix-unicode-strings-deeply-inplace-pmb": "^0.1.0",
-    "getoraddkey-simple": "^0.1.7",
+    "getoraddkey-simple": "^0.1.8",
     "getown": "^1.0.1",
     "hookrunner25a-pmb": "^0.1.1",
     "is-string": "^1.0.7",
@@ -68,11 +68,11 @@
     "merge-options": "^3.0.4",
     "must-lookup-prop-in-dict-pmb": "^1.0.2",
     "net-smartlisten-pmb": "^1.0.3",
-    "nodemjs": "^0.1.15",
+    "nodemjs": "^0.1.16",
     "nullify-object-values-shallow-inplace": "^0.1.0",
     "obj-from-keys-list": "^0.1.0",
-    "objdive": "^0.1.4",
-    "objpop": "^0.3.5",
+    "objdive": "^0.1.5",
+    "objpop": "^0.3.6",
     "ordered-map-extended-pmb": "^0.1.2",
     "p-each-series": "^2.2.0",
     "p-fatal": "^0.1.5",
@@ -82,7 +82,7 @@
     "pify": "^5.0.0",
     "postgres-dump-writer-helpers-220524-pmb": "^0.3.2",
     "postgres-pool-pmb": "^0.1.2",
-    "qrystr": "^0.1.4",
+    "qrystr": "^0.1.5",
     "read-data-file": "^2.0.11",
     "read-relaxed-json-from-stdin-pmb": "^1.0.2",
     "regexp-flags-upfront": "^0.1.1",
@@ -108,8 +108,8 @@
   "devDependencies": {
     "eslint-config-nodejs-pmb": "^0.3.6",
     "eslint-plugin-json-light-pmb": "^1.0.7",
-    "eslint-plugin-n": "^17.10.2",
-    "eslint-pretty-pmb": "^1.0.5"
+    "eslint-plugin-n": "^17.16.2",
+    "eslint-pretty-pmb": "^1.0.7"
   },
 
 
