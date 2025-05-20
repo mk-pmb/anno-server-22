@@ -67,6 +67,7 @@ const EX = async function multiSearch(ctx) {
     outFmtMain,
     outFmtSub,
     subjTgtSpec: ores(subjTgtSpec),
+    aclAdditionalTargetUrls: [],
   };
 
   EX.miscUntrustedMetaOptNames.forEach(function maybeCopy(k) {
@@ -94,7 +95,6 @@ const EX = async function multiSearch(ctx) {
   }
 
   const delayedPrivilegeChecks = new Set();
-  const additionalTargetUrls = [];
 
   if (subjTgtSpec) {
     const byPrefix = subjTgtSpec.endsWith('/*') && subjTgtSpec.slice(0, -1);
@@ -147,7 +147,7 @@ const EX = async function multiSearch(ctx) {
     //  * To validate read (or similar) on all targets,
     //  * For ACL preview.
     delayedPrivilegeChecks.add(contentMode.priv);
-    additionalTargetUrls.push(subjTgtSpec);
+    meta.aclAdditionalTargetUrls.push(subjTgtSpec);
     if (asRoleName) {
       // ^-- i.e., client can be expected to tolerate our custom fields.
       delayedPrivilegeChecks.aclPreviewPriv = contentMode.priv;
@@ -222,10 +222,13 @@ Object.assign(EX, {
   },
 
 
-  async checkSubjTgtAcl(srv, req, privNamesSet, found, additionalTargetUrls) {
+  async checkSubjTgtAcl(srv, req, privNamesSet, found) {
     const privNames = Array.from(privNamesSet);
     if (!privNames.length) { return; }
 
+    const {
+      aclAdditionalTargetUrls,
+    } = found.meta;
     const foundSubjTgtUrls = found.map(function findSubjectTargets(rec) {
       const subj = rec.subject_target_rel_urls;
       if (subj) { return subj; }
@@ -240,7 +243,7 @@ Object.assign(EX, {
     }).flat();
     const allSubjTgtUrls = [
       ...foundSubjTgtUrls,
-      ...additionalTargetUrls,
+      ...aclAdditionalTargetUrls,
     ].filter(Boolean);
     if (!allSubjTgtUrls.length) { return; }
 
