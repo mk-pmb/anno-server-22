@@ -62,6 +62,7 @@ async function fmtColl(ctx, rawSearchResults) {
   const fmtHnd = getOwn(EX.outFmtHandlers, meta.outFmtMain || '');
   if (!fmtHnd) { throw outFmtUnsupported(); }
   const annos = rawSearchResults.toFullAnnos();
+  annos.getRawSearchResults = Object.bind(null, rawSearchResults);
   return fmtHnd({ ...ctx, annos, extraTopFields });
 }
 

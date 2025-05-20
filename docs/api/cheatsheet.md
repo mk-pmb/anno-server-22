@@ -101,6 +101,12 @@ https://anno.ub.uni-heidelberg.de/anno/by/subject_target;fmt=rss;limit=20/https:
 
 
 
+### Option `;fmt=rss:tgt`
+
+Like RSS, but also report the subject target URL(s) as `dc:references`.
+
+
+
 ### Option `;fmt=count`
 
 Report the total amount of annotations found,

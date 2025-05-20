@@ -1,5 +1,6 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
+import arrayOfTruths from 'array-of-truths';
 import dateFmtRfc822 from 'rfc822-date';
 import mapValues from 'lodash.mapvalues';
 import mustBe from 'typechecks-pmb/must-be';
@@ -44,15 +45,23 @@ const EX = function fmtAnnosAsRssFeed(how) {
   if (lnk.startsWith('/')) { lnk = srv.publicBaseUrlNoSlash + lnk; }
 
   const dateFieldName = (how.dateFieldName || 'created');
+  const [subFmt1] = meta.outFmtSub;
+  const subjUrls = ((subFmt1 === 'tgt')
+    && meta.subjTgtUrlsByResultIndex) || '';
+
   const rss = [
     '<?xml version="1.0" encoding="utf-8"?>',
-    '<rss version="2.0"><channel>',
+    '<rss version="2.0"',
+    '  xmlns:dc="http://purl.org/dc/elements/1.1/"',
+    '  ><channel>',
     xmlStrTag('title', feedTitle || 'Annotations'),
     ...Object.values(mapValues(extraTopFields, EX.fmtOneExtraTopField)),
-    ...annos.filter(Boolean).map(a => ('  <item>\n'
+
+    ...arrayOfTruths(annos).map((a, rIdx) => ('  <item>\n'
       + xmlStrTag('title', a['dc:title'] || a.title || '(untitled)')
       + xmlStrTag('link', fmtAnnoRssLink(lnk, a, meta))
       + xmlStrTag('pubDate', fmtAnnoRssDate(a[dateFieldName], a))
+      + (subjUrls && EX.renderTargetLinks(subjUrls[rIdx]))
       + '  </item>')),
     '</channel>',
     '</rss>\n'].filter(Boolean).join('\n');
@@ -78,6 +87,14 @@ Object.assign(EX, {
     let w = v;
     if ((w && typeof w) === 'object') { w = prettyJson(v); }
     return '  <!-- ' + xmlenc(String(k + ': ' + w)) + ' -->';
+  },
+
+
+  renderTargetLinks(origList) {
+    let list = new Set(origList);
+    list = Array.from(list.values());
+    list = list.map(url => xmlStrTag('dc:references', url));
+    return list.join('');
   },
 
 

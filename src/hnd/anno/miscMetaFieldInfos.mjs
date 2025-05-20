@@ -7,6 +7,12 @@ const EX = {
   subjTgtAclField: 'ubhd:aclPreviewBySubjectTargetUrl',
   unapprovedStampName: '_ubhd:unapproved',
 
+  targetLinkCandidatePropNames: [
+    'id',
+    'scope',
+    'source',
+  ],
+
 };
 Object.assign(EX, {
 
