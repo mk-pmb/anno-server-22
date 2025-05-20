@@ -170,10 +170,6 @@ const EX = async function multiSearch(ctx) {
   debugHints.nResults = found.length;
   // console.debug('subjectTarget: found =', found, '</</ subjTgt found');
 
-  await (skipAcl || EX.checkSubjTgtAcl(srv, req,
-    delayedPrivilegeChecks, found, additionalTargetUrls));
-  stopwatch.lateAcl = Date.now();
-
   Object.assign(found, {
 
     meta,
@@ -185,6 +181,10 @@ const EX = async function multiSearch(ctx) {
     },
 
   });
+
+  await (skipAcl || EX.checkSubjTgtAcl(srv, req,
+    delayedPrivilegeChecks, found));
+  stopwatch.lateAcl = Date.now();
 
   stopwatch.packaged = Date.now();
   meta.stopwatchDurations = debugHints.stopWatch();
