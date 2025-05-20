@@ -10,21 +10,24 @@ function cte(cteName, sqlLines) {
   return sql;
 }
 
-function mcm(cteName, extraColumns, joins) {
+const mcm = function makeContentMode(cteName, extraColumns, joins) {
   return cte(cteName, [
     'SELECT \v_in.*, ' + extraColumns + ' FROM \v_in',
     ...[].concat(joins).map(j => j + ' USING (versid)'),
     'JOIN anno_data AS \v_data USING (versid)',
   ]);
-}
+};
+
+
+mcm.annoTitle = ('COALESCE('
+    + "#details->>'dc:title', "
+    + "#details->>'title', "
+    + 'NULL)');
 
 
 const EX = {
 
-  addAnnoTitle: mcm('anno_titles', 'COALESCE('
-    + "#details->>'dc:title', "
-    + "#details->>'title', "
-    + 'NULL) AS title', []),
+  addAnnoTitle: mcm('anno_titles', mcm.annoTitle + ' AS title', []),
 
   addFullContent: mcm('full_content', 'st.stamps, #details',
     'LEFT JOIN anno_stamps_json AS st'),
