@@ -67,6 +67,7 @@ const EX = async function multiSearch(ctx) {
     outFmtMain,
     outFmtSub,
     subjTgtSpec: ores(subjTgtSpec),
+    subjTgtUrlsByResultIndex: [],
     aclAdditionalTargetUrls: [],
   };
 
@@ -228,18 +229,24 @@ Object.assign(EX, {
 
     const {
       aclAdditionalTargetUrls,
+      subjTgtUrlsByResultIndex,
     } = found.meta;
-    const foundSubjTgtUrls = found.map(function findSubjectTargets(rec) {
-      const subj = rec.subject_target_rel_urls;
-      if (subj) { return subj; }
+    const foundSubjTgtUrls = found.map(function findSubjectTargets(rec, rIdx) {
+      let subj = rec.subject_target_rel_urls;
+      if (subj) {
+        subjTgtUrlsByResultIndex[rIdx] = subj;
+        return subj;
+      }
       if (!rec.details) {
         const [baseId, versNum] = rec.versid;
         const msg = `No details for annotation with ID ${baseId} v${
           versNum} while checking privileges {${privNames.join(', ')}}`;
         throw new Error(msg);
       }
-      return categorizeTargets(srv, rec.details,
+      subj = categorizeTargets(srv, rec.details,
         { errInvalidAnno: fubar }).subjTgtUrls;
+      subjTgtUrlsByResultIndex[rIdx] = subj;
+      return subj;
     }).flat();
     const allSubjTgtUrls = [
       ...foundSubjTgtUrls,
