@@ -150,6 +150,11 @@ Object.assign(EX, {
         throw new Error('Refusing SvgSelector that contains no numbers.');
       }
     }
+    if (tgt.id) {
+      if (tgt.id === tgt.scope) {
+        throw new Error('Target scope must differ from its id.');
+      }
+    }
   },
 
 });
