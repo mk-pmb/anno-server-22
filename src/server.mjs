@@ -29,6 +29,8 @@ import timeoutFallbackResponse from './timeoutFallbackResponse.mjs';
 
 const pathInRepo = absDir(import.meta, '..');
 
+const guessDockerized = (process.getuid() === 0);
+
 const defaultConfig = {
 
   envcfg_prefix: 'anno_',
@@ -36,7 +38,7 @@ const defaultConfig = {
   cfgfiles: configFilesAdapter.getConfigDefaults(),
   debug_flags: '',
 
-  listen_addr: '127.0.0.1:33321',
+  listen_addr: (guessDockerized ? '0.0.0.0' : '127.0.0.1') + ':33321',
   notify_server_listening: '',
   public_baseurl: '',
   wwwpub_path: pathInRepo('wwwpub'),
