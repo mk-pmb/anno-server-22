@@ -6,7 +6,7 @@ CFG[annosrv_appdir]='/srv/annosrv/anno-server-22'
 # as seen from the docker host system. No trailing slash.
 
 ###:maybe_customize:
-CFG[default_network_bridge_name]='br-as22'
+CFG[default_network_bridge_name]='br-ubhd-as22'
 # The docker network bridge name to use.
 # This is relevant for your firewall settings.
 
