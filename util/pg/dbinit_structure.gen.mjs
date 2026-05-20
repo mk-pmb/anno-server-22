@@ -188,7 +188,8 @@ wrSql('');
 const defineViewCmd = 'CREATE OR REPLACE VIEW ';
 loMapValues(views, function createView(recipe, name) {
   wrSql(defineViewCmd + schemaName + '.' + name + ' AS '
-    + String(recipe || '').trimEnd() + ';\n');
+    + String(recipe || '').trimEnd()
+    + '\n; -- END VIEW ' + name + '\n');
 });
 
 
