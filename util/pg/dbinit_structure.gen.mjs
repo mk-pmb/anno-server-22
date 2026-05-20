@@ -54,19 +54,19 @@ const annoDataFields = {
 const visibilityViews = (function compile() {
   const colsGlued = 'versid';
   const selCols = 'SELECT ' + colsGlued + ' FROM ';
-  const wrapOrder = [].join.bind(['SELECT * FROM (\n',
-    '\n) AS input ORDER BY versid ASC']);
+  const wrapOrder = s => (['SELECT * FROM (\n'
+    + s + '\n) AS input ORDER BY versid ASC']);
   const selStByType = selCols + 'anno_stamps WHERE st_type ';
   const selUnappSt = `${selStByType}= '${externalDefs.unappStamp}'`;
   const selSunsetSt = `${selStByType}= 'as:deleted'`;
   const selUndecided = (selUnappSt + ' EXCEPT ' + selSunsetSt
     + '\n  -- Ignore st_effts: A future sunset date counts as decision.');
   return {
-    views: {
-      anno_unapproved: wrapOrder(selUnappSt),
-      anno_disclosed: wrapOrder(selCols + 'anno_data EXCEPT ' + selUnappSt),
-      anno_undecided: wrapOrder(selUndecided),
-    },
+    views: loMapValues({
+      anno_disclosed: selCols + 'anno_data EXCEPT ' + selUnappSt,
+      anno_unapproved: selUnappSt,
+      anno_undecided: selUndecided,
+    }, wrapOrder),
     wrapOrder,
     colsGlued,
   };
