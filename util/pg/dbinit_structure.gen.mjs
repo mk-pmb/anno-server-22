@@ -52,23 +52,21 @@ const annoDataFields = {
 
 
 const visibilityViews = (function compile() {
-  const colsGlued = 'versid';
-  const selCols = 'SELECT ' + colsGlued + ' FROM ';
+  const selVersId = 'SELECT versid FROM ';
   const wrapOrder = s => (['SELECT * FROM (\n'
     + s + '\n) AS input ORDER BY versid ASC']);
-  const selStByType = selCols + 'anno_stamps WHERE st_type ';
+  const selStByType = selVersId + 'anno_stamps WHERE st_type ';
   const selUnappSt = `${selStByType}= '${externalDefs.unappStamp}'`;
   const selSunsetSt = `${selStByType}= 'as:deleted'`;
   const selUndecided = (selUnappSt + ' EXCEPT ' + selSunsetSt
     + '\n  -- Ignore st_effts: A future sunset date counts as decision.');
   return {
     views: loMapValues({
-      anno_disclosed: selCols + 'anno_data EXCEPT ' + selUnappSt,
+      anno_disclosed: selVersId + 'anno_data EXCEPT ' + selUnappSt,
       anno_unapproved: selUnappSt,
       anno_undecided: selUndecided,
     }, wrapOrder),
     wrapOrder,
-    colsGlued,
   };
 }());
 
@@ -91,7 +89,7 @@ const views = { // in order of creation – will be dropped in reverse order.
     `,
 
   anno_stamps_json: visibilityViews.wrapOrder(`
-    SELECT ${visibilityViews.colsGlued}, json_agg(
+    SELECT versid, json_agg(
       jsonb_build_object(
         'type', st_type,
         'ts', COALESCE(${effUtsExpr}, 0),
