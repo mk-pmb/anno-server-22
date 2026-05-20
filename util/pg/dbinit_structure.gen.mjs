@@ -57,12 +57,12 @@ const visibilityViews = (function compile() {
   const wrapOrder = [].join.bind(['SELECT * FROM (\n',
     '\n) AS input ORDER BY versid ASC']);
   const selStByType = selCols + 'anno_stamps WHERE st_type ';
-  const unappSt = `${selStByType}= '${externalDefs.unappStamp}'`;
+  const selUnappSt = `${selStByType}= '${externalDefs.unappStamp}'`;
   return {
     views: {
-      anno_unapproved: wrapOrder(unappSt),
-      anno_disclosed: wrapOrder(selCols + 'anno_data EXCEPT ' + unappSt),
-      anno_undecided: wrapOrder(unappSt
+      anno_unapproved: wrapOrder(selUnappSt),
+      anno_disclosed: wrapOrder(selCols + 'anno_data EXCEPT ' + selUnappSt),
+      anno_undecided: wrapOrder(selUnappSt
         + ` EXCEPT ${selStByType} = 'as:deleted'`),
     },
     wrapOrder,
