@@ -187,13 +187,10 @@ wrSql('');
 
 
 
+const defineViewCmd = 'CREATE OR REPLACE VIEW ';
 loMapValues(views, function createView(recipe, name) {
-  wrSql('DROP VIEW IF EXISTS "' + schemaName + '"."' + name + '";'); /*
-    ^-- This drop is useless if you import the entire file, as we already
-    deleted all views above. However, it's useful if you want to recreate
-    a single view as part of an update. */
-  wrSql('CREATE VIEW ' + schemaName + '.' + name + ' AS '
-    + recipe.trimEnd() + ';\n');
+  wrSql(defineViewCmd + schemaName + '.' + name + ' AS '
+    + String(recipe || '').trimEnd() + ';\n');
 });
 
 
@@ -203,7 +200,7 @@ outputSql = outputSql.trim();
 const fails = [];
 if (outputSql.includes('undef')) { fails.push('undef'); }
 if (!outputSql.includes('CREATE TABLE ')) { fails.push('no table'); }
-if (!outputSql.includes('CREATE VIEW ')) { fails.push('no view'); }
+if (!outputSql.includes(defineViewCmd)) { fails.push('no view'); }
 
 if (fails.length) {
   console.error('SQL that failed the self test:', outputSql);
