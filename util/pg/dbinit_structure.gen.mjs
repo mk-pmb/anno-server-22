@@ -6,6 +6,8 @@ import pgDumpWriter from 'postgres-dump-writer-helpers-220524-pmb';
 
 let outputSql = '';
 function wrSql(add) { outputSql += add + '\n'; }
+function bindJoin(...args) { return args.join.bind(args); }
+
 
 const externalDefs = { /*
   These definitions have their authoritative source in other files of the
@@ -56,6 +58,8 @@ const visibilityViews = (function compile() {
   const wrapOrder = s => (['SELECT * FROM (\n'
     + s + '\n) AS input ORDER BY versid ASC']);
   const selStByType = selVersId + 'anno_stamps WHERE st_type ';
+  const stampInEffect = '(COALESCE(st_effts, st_at) <= now())';
+  // const stampScheduled = '(COALESCE(st_effts, st_at) > now())';
   const selUnappSt = `${selStByType}= '${externalDefs.unappStamp}'`;
   const selSunsetSt = `${selStByType}= 'as:deleted'`;
   const selUndecided = (selUnappSt + ' EXCEPT ' + selSunsetSt
@@ -63,6 +67,9 @@ const visibilityViews = (function compile() {
   return {
     views: loMapValues({
       anno_disclosed: selVersId + 'anno_data EXCEPT ' + selUnappSt,
+      anno_retracted: selStByType + "= 'as:deleted' AND " + stampInEffect,
+      anno_active: (selVersId + 'anno_disclosed'
+        + ' EXCEPT ' + selVersId + 'anno_retracted'),
       anno_unapproved: selUnappSt,
       anno_undecided: selUndecided,
     }, wrapOrder),
@@ -72,19 +79,60 @@ const visibilityViews = (function compile() {
 
 
 const effUtsExpr = 'extract(epoch from COALESCE(st_effts, st_at))';
-const effUtsZeroHint = ['',
+const effUtsZeroHint = bindJoin('',
   'COALESCE-ing with 0 here would be useless for most JOINs because',
   'a non-existing stamp would still produce either NULL or row omission,',
   'never number 0.',
-];
+);
+
+
+function degTpl(tpl) {
+  const parts = String(tpl || '').split('°');
+  return parts.join.bind(parts);
+}
 
 
 const views = { // in order of creation – will be dropped in reverse order.
 
   ...visibilityViews.views,
 
+  anno_max_vernum: (function compile() {
+    const srcTpl = (as, from) => `${as} AS (
+      SELECT (versid).baseid AS baseid, MAX((versid).vernum) AS maxver_${as}
+      FROM ${(from && from.trim()) || ('anno_' + as)}
+      GROUP BY (versid).baseid)`;
+    const addSrc = [
+      'active',
+    ];
+    const impl = [
+      ('WITH ' + srcTpl('known', 'anno_data'
+        + ' WHERE (versid).vernum >= 1 -- redundant unless DB is FUBAR')),
+      ...addSrc.map(s => '  , ' + srcTpl(s)),
+      '    SELECT known.*',
+      ...addSrc.map(degTpl('      , COALESCE(°.maxver_°, 0) AS maxver_°')),
+      '    FROM known',
+      ...addSrc.map(degTpl('FULL JOIN ° ON known.baseid = °.baseid\n')),
+      '    ORDER BY baseid ASC',
+    ].join('\n');
+    return impl;
+  }()),
+
+
+  anno_active_is_latest: `
+    SELECT a.versid, m.maxver_active,
+      ((a.versid).vernum = m.maxver_active) AS is_latest_ver
+    FROM anno_active AS a
+    JOIN anno_max_vernum AS m ON (a.versid).baseid = m.baseid
+    `,
+
+  anno_active_only_latest: `
+    SELECT versid FROM anno_active AS a
+    JOIN anno_max_vernum AS m ON (a.versid).baseid = m.baseid
+    AND (a.versid).vernum = m.maxver_active
+    `,
+
   anno_stamps_effuts: `
-    SELECT *, ${effUtsExpr} AS st_effuts${effUtsZeroHint.join('\n    -- ')}
+    SELECT *, ${effUtsExpr} AS st_effuts${effUtsZeroHint('\n    -- ')}
     FROM anno_stamps
     `,
 
