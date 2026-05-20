@@ -58,12 +58,14 @@ const visibilityViews = (function compile() {
     '\n) AS input ORDER BY versid ASC']);
   const selStByType = selCols + 'anno_stamps WHERE st_type ';
   const selUnappSt = `${selStByType}= '${externalDefs.unappStamp}'`;
+  const selSunsetSt = `${selStByType}= 'as:deleted'`;
+  const selUndecided = (selUnappSt + ' EXCEPT ' + selSunsetSt
+    + '\n  -- Ignore st_effts: A future sunset date counts as decision.');
   return {
     views: {
       anno_unapproved: wrapOrder(selUnappSt),
       anno_disclosed: wrapOrder(selCols + 'anno_data EXCEPT ' + selUnappSt),
-      anno_undecided: wrapOrder(selUnappSt
-        + ` EXCEPT ${selStByType} = 'as:deleted'`),
+      anno_undecided: wrapOrder(selUndecided),
     },
     wrapOrder,
     colsGlued,
@@ -170,6 +172,17 @@ createSimpleTable('anno_stamps', {
   st_by: 'char*',
   st_detail: 'json ?',
 });
+
+
+wrSql("COMMENT ON COLUMN public.anno_stamps.st_type IS '"
+  + 'Reminder: Imported stamps may instead occurr as top-level fields'
+  + ' (with the st_type as key) of anno_data.details!'
+  + "';");
+wrSql("COMMENT ON COLUMN public.anno_stamps.st_effts IS '"
+  + 'When the stamp will (or has) become effective; overrides st_at.'
+  + ' See view anno_stamps_json for how to COALESCE.'
+  + "';");
+wrSql('');
 
 
 
