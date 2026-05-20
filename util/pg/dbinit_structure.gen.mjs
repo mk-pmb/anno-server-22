@@ -146,6 +146,14 @@ wrSql('CREATE TYPE ' + annoDataOpt.primKeyType + ' AS ('
 
 createSimpleTable('anno_data', annoDataFields, annoDataOpt);
 
+wrSql("COMMENT ON COLUMN public.anno_data.details IS '"
+  + 'Web Annotation Data Model representation'
+  + ' (https://www.w3.org/TR/annotation-model/)'
+  + ' minus static meta data'
+  + ' (i.e. constant values prescribed by the standard'
+  + ' plus URLs that we can generate on-the-fly from versid)'
+  + "';");
+wrSql('');
 
 createSimpleTable('anno_links', {
   ...annoAddrTypes,
