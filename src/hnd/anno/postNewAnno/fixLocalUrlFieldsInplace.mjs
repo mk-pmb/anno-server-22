@@ -15,8 +15,8 @@ const regexps = {
 
 
 const topLevelStringProps = [
-  'dc:isVersionOf',
-  'dc:replaces',
+  'dcterms:isVersionOf',
+  'dcterms:replaces',
   'id',
   'via',
 ];

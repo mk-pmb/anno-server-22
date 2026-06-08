@@ -116,7 +116,7 @@ const EX = async function multiSearch(ctx) {
 
   if (asRoleName === 'approver') {
     validRole = true;
-    await addRequiredPrivilege('stamp_any_add_dc_dateAccepted');
+    await addRequiredPrivilege('stamp_any_add_dcterms_dateAccepted');
     search.tmpl('visibilityWhere', '#visibilityAny');
   }
 
@@ -295,7 +295,7 @@ Object.assign(EX, {
       // xSunny: rec.sunny,
     });
     delete fullAnno[miscMetaFieldInfos.unapprovedStampName];
-    if (!rec.disclosed) { fullAnno['dc:dateAccepted'] = false; }
+    if (!rec.disclosed) { fullAnno['dcterms:dateAccepted'] = false; }
     if (!rec.sunny) { fullAnno['as:deleted'] = uts2iso(rec.sunset_uts); }
     return fullAnno;
   },

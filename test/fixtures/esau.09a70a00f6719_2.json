@@ -13,8 +13,8 @@
     "name": "Margit Krenn",
     "type": "Person"
   },
-  "dc:isVersionOf": "09a70a00f6719",
-  "dc:replaces": "09a70a00f6719~1",
+  "dcterms:isVersionOf": "09a70a00f6719",
+  "dcterms:replaces": "09a70a00f6719~1",
   "dc:title": "Sigismund von Luxemburg und Fried\u2026",
   "rights": "https://creativecommons.org/licenses/by/4.0/",
   "target": {

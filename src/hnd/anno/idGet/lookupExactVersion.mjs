@@ -20,7 +20,7 @@ const {
 } = httpErrors.throwable;
 
 
-const approverPrivilegeName = 'stamp_any_add_dc_dateAccepted';
+const approverPrivilegeName = 'stamp_any_add_dcterms_dateAccepted';
 
 
 function ifDefined(x, d) { return (x === undefined ? d : x); }
@@ -122,7 +122,7 @@ const EX = async function lookupExactVersion(ctx) {
 
   if (lowlineStamps[miscMetaFieldInfos.unapprovedStampName]) {
     if (allowReadUnapproved) {
-      annoDetails['dc:dateAccepted'] = false;
+      annoDetails['dcterms:dateAccepted'] = false;
     } else {
       const err = noSuchAnno('Annotation requires approval');
       /* NB: "Lacking" approval is different from "pending" approval.

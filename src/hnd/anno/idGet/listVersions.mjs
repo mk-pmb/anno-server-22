@@ -49,7 +49,7 @@ const EX = async function listVersions(ctx) {
       'iana:working-copy': workingCopyUrl,
     };
     if (role) {
-      if (!rec.disclosed) { anno['dc:dateAccepted'] = false; }
+      if (!rec.disclosed) { anno['dcterms:dateAccepted'] = false; }
       if (!rec.sunny) { anno['as:deleted'] = uts2iso(rec.sunset_uts); }
     }
     return anno;

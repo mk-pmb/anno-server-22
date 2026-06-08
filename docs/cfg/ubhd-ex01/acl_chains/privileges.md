@@ -82,10 +82,10 @@ Approval
 
 Only relevant for [services](../services/) that use approval.
 
-* `stamp_any_add_dc_dateAccepted`:
+* `stamp_any_add_dcterms_dateAccepted`:
   Required for approving another user's annotation.
 
-* `stamp_own_add_dc_dateAccepted`:
+* `stamp_own_add_dcterms_dateAccepted`:
   Required for approving your own annotation.
 
 

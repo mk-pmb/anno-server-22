@@ -166,7 +166,7 @@ const EX = {
 
 
   maybeStampUnapproved(anno, stamps) {
-    const apiFieldName = 'dc:dateAccepted';
+    const apiFieldName = 'dcterms:dateAccepted';
     if (anno[apiFieldName] !== false) { return; }
     delete anno[apiFieldName]; // eslint-disable-line no-param-reassign
     stamps.push({ st_type: miscMetaFieldInfos.unapprovedStampName });

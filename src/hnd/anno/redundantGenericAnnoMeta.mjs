@@ -42,12 +42,12 @@ const EX = {
     const addMeta = {
       id: fullPubUrl,
       type: 'Annotation',
-      'dc:isVersionOf': latestPubUrl,
+      'dcterms:isVersionOf': latestPubUrl,
       'iana:latest-version': latestPubUrl,
       'iana:version-history': latestPubUrl + '/versions',
     };
     if (versNum >= 2) {
-      addMeta['dc:replaces'] = latestPubUrl + vnSep + (versNum - 1);
+      addMeta['dcterms:replaces'] = latestPubUrl + vnSep + (versNum - 1);
     }
     const fullAnno = {
       ...EX.commonStaticAnnoMeta,

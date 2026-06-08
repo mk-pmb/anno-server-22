@@ -98,8 +98,8 @@ Object.assign(EX, {
   dupeStamp() { throw stateConflict('A stamp of this type already exists'); },
 
   roleByStamp: {
-    'as:deleted':         'approver',
-    'dc:dateApproved':    'approver',
+    'as:deleted':             'approver',
+    'dcterms:dateAccepted':   'approver',
   },
 
 
@@ -110,7 +110,7 @@ Object.assign(EX, {
 
   stampFx: {
     [miscMetaFieldInfos.doiStampName]: deleteDoiRequestStamp,
-    'dc:dateAccepted': approvalDecisionSideEffects,
+    'dcterms:dateAccepted': approvalDecisionSideEffects,
   },
 
 

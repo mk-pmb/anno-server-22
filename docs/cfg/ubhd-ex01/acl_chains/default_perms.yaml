@@ -22,7 +22,7 @@
 ^_moderator:
   - if: always
     tendency:
-      stamp_any_add_dc_dateAccepted:      allow
+      stamp_any_add_dcterms_dateAccepted:      allow
       stamp_any_add_as_deleted:           allow
 
       revise_any:             allow

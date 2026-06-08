@@ -93,7 +93,7 @@ Object.assign(EX, {
   renderTargetLinks(origList) {
     let list = new Set(origList);
     list = Array.from(list.values());
-    list = list.map(url => xmlStrTag('dc:references', url));
+    list = list.map(url => xmlStrTag('dcterms:references', url));
     return list.join('');
   },
 

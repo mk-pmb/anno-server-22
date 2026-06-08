@@ -18,7 +18,7 @@ Object.assign(EX, {
 
   visibilityRelatedStampsNames: [
     'as:deleted',
-    'dc:dateAccepted',
+    'dcterms:dateAccepted',
     EX.unapprovedStampName,
   ],
 

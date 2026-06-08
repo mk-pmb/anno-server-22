@@ -62,10 +62,10 @@ const EX = async function parseSubmittedAnno(mustPopInput, cfg, psaCtx) {
   util.copy('as:audience', 'obj | ary | nonEmpty str | undef');
   util.copy('as:context', 'obj | ary | nonEmpty str | undef');
   util.copy('creator', 'obj | ary | nonEmpty str | undef');
-  util.copy('dc:isVersionOf', 'nonEmpty str | undef');
   util.copy('dc:language', 'nonEmpty str | undef');
-  util.copy('dc:replaces', 'nonEmpty str | undef');
   util.copy('dc:title', 'nonEmpty str');
+  util.copy('dcterms:isVersionOf', 'nonEmpty str | undef');
+  util.copy('dcterms:replaces', 'nonEmpty str | undef');
   util.copy('rights', 'nonEmpty str | undef');
 
   util.parseResource('target');

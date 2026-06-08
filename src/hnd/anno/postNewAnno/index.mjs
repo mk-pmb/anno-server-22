@@ -82,13 +82,13 @@ const EX = async function postNewAnno(srv, req) {
   };
   ctx.author = await decideAuthorIdentity(ctx);
 
-  if (anno['dc:isVersionOf'] && (!anno['dc:replaces'])) {
+  if (anno['dcterms:isVersionOf'] && (!anno['dcterms:replaces'])) {
     const msg = ('On this server, '
-      + 'revision requests must include a full "dc:replaces" URL.');
+      + 'revision requests must include a full "dcterms:replaces" URL.');
     throw badRequest(msg);
   }
-  ctx.isRevisedVersion = Boolean(anno['dc:isVersionOf']
-    || anno['dc:replaces']);
+  ctx.isRevisedVersion = Boolean(anno['dcterms:isVersionOf']
+    || anno['dcterms:replaces']);
   ctx.postActionPrivName = (function decidePriv() {
     if (ctx.isRevisedVersion) {
       if (ctx.author.authorized) { return 'revise_own'; }
