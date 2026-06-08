@@ -7,7 +7,7 @@
 
   function addOneUser(user, caption) {
     frm.innerHTML += ('<label><input type="radio" name="user" value="'
-      + user + '"><p>' + (caption || user) + '</p></label>\n');
+      + user + '"><p>' + (caption || user) + '</p></label>');
   }
   Object.entries(qlu).forEach(userAndCaption => addOneUser(...userAndCaption));
 

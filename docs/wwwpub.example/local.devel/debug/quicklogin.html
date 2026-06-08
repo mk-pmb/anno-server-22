@@ -5,19 +5,18 @@
   <title>as22 Quick Login</title>
   <meta name="viewport" content="width=device-width">
   <style type="text/css">
-    label {
-      display: inline;
-    }
     input[type=radio] { position: absolute; top: -200vh; left: -200vw; }
-    p {
-      display: inline-block; margin: 1em; padding: 0.2em 0.5em;
-      border: 1px solid grey; background: whitesmoke;
-    }
+    html, body, form, p { margin: 0; }
+    h2, label { display: inline-block; line-height: 1;
+      margin: 1rem; margin-right: 0; margin-bottom: 0; }
+    h2 { font-size: 120%; }
+    p { padding: 0.2em 0.5em; border: 1px solid grey; background: whitesmoke; }
     input[type=radio]:checked + p { background-color: palegreen; }
     input[type=radio][value=""] + p:empty:before { content: "(—)"; }
   </style>
 </head><body>
-<form action="nope://" method="get" name="quicklogin"></form>
+<form action="invalid://" method="get" name="quicklogin"
+  ><h2>Quick Login:</h2></form>
 <script src="../debug.cfg/quicklogin.users.js"></script><!-- Example:
 window.quickLoginUsers = {
   '': '(from login)',
