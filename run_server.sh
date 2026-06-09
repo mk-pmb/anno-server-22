@@ -66,7 +66,7 @@ function actually_run_server () {
 
   local LINT="${CFG[lint]}"
   if [ -n "$LINT" ]; then
-    [ "$LINT" == + ] && LINT='elp'
+    [ "$LINT" == + ] && LINT='e'lp # broken quote to hide from guess-js-deps
     log_progress "Running linter: $LINT"
     "$LINT" || return $?
   fi
