@@ -19,7 +19,9 @@ const EX = function idGet(ctx) {
     if (subRoute) { throw noSuchAnno(); }
     return serveExactVersion(ctx);
   }
-  if (!subRoute) { return findLatest.redirToLatestVersion(ctx); }
+  if (!subRoute) {
+    return findLatest.redirToLatestVersion(ctx);
+  }
   if (subRoute === 'versions') { return listVersions(ctx); }
   throw noSuchResource();
 };
