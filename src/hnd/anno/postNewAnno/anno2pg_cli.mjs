@@ -12,8 +12,10 @@ import readRelaxedJsonFromStdin from 'read-relaxed-json-from-stdin-pmb';
 import sortedJson from 'safe-sortedjson';
 import vTry from 'vtry';
 
+import makeRequestBodyParser from
+  '@ubhd-as22/http-server-base/src/hnd/util/parseRequestBody.mjs';
+
 import miscMetaFieldInfos from '../miscMetaFieldInfos.mjs';
-import parseRequestBody from '../../util/parseRequestBody.mjs';
 import parseVersId from '../parseVersionIdentifier.mjs';
 
 import fmtRelRecs from './fmtRelRecs.mjs';
@@ -139,7 +141,7 @@ const EX = {
       return parsed;
     }
 
-    const anno = await parseRequestBody.fancify(rawInputAnno)
+    const anno = await makeRequestBodyParser.util.fancify(rawInputAnno)
       .catchBadInput(validateInput);
     const { baseId, versNum } = parseVersId.fromLocalUrl(minimumConfig,
       Error, mustBe.nest('Anno ID URL', anno.id));

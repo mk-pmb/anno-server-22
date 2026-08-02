@@ -5,7 +5,6 @@ import randomUuid from 'uuid-random';
 
 import detectUserIdentity from '../../../acl/detectUserIdentity.mjs';
 import httpErrors from '../../../httpErrors.mjs';
-import parseRequestBody from '../../util/parseRequestBody.mjs';
 import prettyJson from '../../util/prettyJson.mjs';
 import redundantGenericAnnoMeta from '../redundantGenericAnnoMeta.mjs';
 import sendFinalTextResponse from '../../../finalTextResponse.mjs';
@@ -49,8 +48,8 @@ const EX = async function postNewAnno(srv, req) {
   const configStubForPSA = {
     publicBaseUrlNoSlash: srv.publicBaseUrlNoSlash,
   };
-  const anno = await parseRequestBody.fancy('json', req,
-  ).then(ctx => ctx.catchBadInput(parseSubmittedAnno, configStubForPSA));
+  const anno = await req.parseRequestBody({ fmt: 'json', fancy: true }).then(
+    ctx => ctx.catchBadInput(parseSubmittedAnno, configStubForPSA));
   const tgtCateg = categorizeTargets(srv, anno,
     { errInvalidAnno: badRequest });
   const {
