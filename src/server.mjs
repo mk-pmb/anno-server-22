@@ -1,5 +1,8 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
+import timeoutFallbackResponse from
+  '@ubhd-as22/http-server-base/src/hnd/timeoutFallbackResponse.mjs';
+
 import absDir from 'absdir';
 import envcfgMergeConfigs from 'envcfg-merge-configs-pmb';
 import express from 'express';
@@ -24,7 +27,6 @@ import pluginsLib from './plugins.mjs';
 import prepareAcl from './acl/prepareAcl.mjs';
 import prepareRssFeedsConfig from './hnd/rss/prepareConfig.mjs';
 import servicesAdapter from './cfg/servicesAdapter.mjs';
-import timeoutFallbackResponse from './timeoutFallbackResponse.mjs';
 
 
 const pathInRepo = absDir(import.meta, '..');
