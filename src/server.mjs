@@ -1,5 +1,8 @@
 // -*- coding: utf-8, tab-width: 2 -*-
 
+import configFilesAdapter from
+  '@ubhd-as22/http-server-base/src/cfg/configFilesAdapter/ad.mjs';
+import pluginsLib from '@ubhd-as22/http-server-base/src/plugins.mjs';
 import timeoutFallbackResponse from
   '@ubhd-as22/http-server-base/src/hnd/timeoutFallbackResponse.mjs';
 
@@ -12,7 +15,6 @@ import nodeHttp from 'http';
 import objPop from 'objpop';
 import PrRouter from 'express-promise-router';
 
-import configFilesAdapter from './cfg/configFilesAdapter/ad.mjs';
 import dbAdapter from './dbAdapter/pg/index.mjs';
 import fallbackErrorHandler from './hnd/fallbackErrorHandler.mjs';
 import installGlobalRequestExtras from './hnd/globalRequestExtras.mjs';
@@ -23,7 +25,6 @@ import loggingUtil from './hnd/util/logging.mjs';
 import lusrmgr from './cfg/lusrmgr/index.mjs';
 import makeGenericCorsHandler from './hnd/util/genericCorsHandler.mjs';
 import parseRequestBody from './hnd/util/parseRequestBody.mjs';
-import pluginsLib from './plugins.mjs';
 import prepareAcl from './acl/prepareAcl.mjs';
 import prepareRssFeedsConfig from './hnd/rss/prepareConfig.mjs';
 import servicesAdapter from './cfg/servicesAdapter.mjs';
