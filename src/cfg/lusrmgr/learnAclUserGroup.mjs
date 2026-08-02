@@ -20,7 +20,7 @@ function learnOneUserGroup(ctx, grpName, mustPopDetail) {
 
 
 const EX = {
-  learnItem: learnOneUserGroup,
+  learnOneCfgKey: learnOneUserGroup,
 
   async learnMeta(ctx, mustPopCfgMeta) {
     const { cfgDict, mgr } = ctx;

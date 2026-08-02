@@ -17,7 +17,8 @@ Microsoft Windows XP.
 
 import makeExtendedOrderedMap from 'ordered-map-extended-pmb';
 
-import learnTopicDict from '../learnTopicDict.mjs';
+import learnTopicDict from
+  '@ubhd-as22/http-server-base/src/cfg/learnTopicDict.mjs';
 
 import learnAclUserGroup from './learnAclUserGroup.mjs';
 import learnLocalUser from './learnLocalUser.mjs';

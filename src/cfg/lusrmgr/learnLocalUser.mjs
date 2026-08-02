@@ -37,7 +37,7 @@ async function learnOneLocalUser(ctx, userName, mustPopDetail) {
 
 
 const EX = {
-  learnItem: learnOneLocalUser,
+  learnOneCfgKey: learnOneLocalUser,
 
   async learnMeta(ctx, mustPopCfgMeta) {
     const { mgr, srv } = ctx;

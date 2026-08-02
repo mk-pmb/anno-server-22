@@ -4,8 +4,10 @@ import arrayOfTruths from 'array-of-truths';
 import loMapValues from 'lodash.mapvalues';
 import mergeOpt from 'merge-options';
 
+import learnTopicDict from
+  '@ubhd-as22/http-server-base/src/cfg/learnTopicDict.mjs';
+
 import lazyMergeTruthyPropInplace from './util/lazyMergeTruthyPropInplace.mjs';
-import learnTopicDict from './learnTopicDict.mjs';
 import servicesApi from './servicesApi.mjs';
 
 const OrderedMap = Map; // to clarify where we do care.
