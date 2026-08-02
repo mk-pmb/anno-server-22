@@ -2,6 +2,8 @@
 
 import configFilesAdapter from
   '@ubhd-as22/http-server-base/src/cfg/configFilesAdapter/ad.mjs';
+import makeRequestBodyParser from
+  '@ubhd-as22/http-server-base/src/hnd/util/parseRequestBody.mjs';
 import pluginsLib from '@ubhd-as22/http-server-base/src/plugins.mjs';
 import timeoutFallbackResponse from
   '@ubhd-as22/http-server-base/src/hnd/timeoutFallbackResponse.mjs';
@@ -24,7 +26,6 @@ import libDebugFlags from './cfg/debugFlags.mjs';
 import loggingUtil from './hnd/util/logging.mjs';
 import lusrmgr from './cfg/lusrmgr/index.mjs';
 import makeGenericCorsHandler from './hnd/util/genericCorsHandler.mjs';
-import parseRequestBody from './hnd/util/parseRequestBody.mjs';
 import prepareAcl from './acl/prepareAcl.mjs';
 import prepareRssFeedsConfig from './hnd/rss/prepareConfig.mjs';
 import servicesAdapter from './cfg/servicesAdapter.mjs';
@@ -82,10 +83,6 @@ const EX = async function createServer(customConfig) {
   };
   await pluginsLib.install(srv);
 
-  await parseRequestBody.init({
-    uploadSizeLimit: popCfg('str | undef', 'upload_size_limit'),
-  });
-
   const webSrv = nodeHttp.createServer();
   const app = express();
   app.set('x-powered-by', false);
@@ -133,6 +130,7 @@ const EX = async function createServer(customConfig) {
     getSrv() { return srv; },
     serverDebugFlags,
     ...loggingUtil.requestExtras,
+    ...makeRequestBodyParser.util.requestExtras(popCfg),
   });
 
   srv.runHook('server/installRequestHandler/before', { app, srv });

@@ -4,7 +4,6 @@ import getOwn from 'getown';
 
 import detectUserIdentity from '../../../acl/detectUserIdentity.mjs';
 import httpErrors from '../../../httpErrors.mjs';
-import parseRequestBody from '../../util/parseRequestBody.mjs';
 import sendFinalTextResponse from '../../../finalTextResponse.mjs';
 
 import addStamp from './addStamp.mjs';
@@ -16,19 +15,13 @@ const {
 
 const actionHandlers = {
   addStamp,
-
-  add_stamp(ctx) {
-    ctx.req.logCkp('Deprecated snake-case stamp action "add_stamp"');
-    return addStamp(ctx);
-  },
 };
 
 
 const EX = async function patchAnno(ctx) {
   const { req } = ctx;
-  Object.assign(ctx, ...(await Promise.all([
-    parseRequestBody.fancy('json', req),
-  ])));
+  const fancyBody = await req.parseRequestBody({ fmt: 'json', fancy: true });
+  Object.assign(ctx, fancyBody);
   await ctx.catchBadInput(function parse(mustPopInput) {
     ctx.action = mustPopInput('nonEmpty str', 'action');
   });
