@@ -2,6 +2,8 @@
 
 import configFilesAdapter from
   '@ubhd-as22/http-server-base/src/cfg/configFilesAdapter/ad.mjs';
+import installGlobalRequestExtras from
+  '@ubhd-as22/http-server-base/src/hnd/globalRequestExtras.mjs';
 import makeRequestBodyParser from
   '@ubhd-as22/http-server-base/src/hnd/util/parseRequestBody.mjs';
 import pluginsLib from '@ubhd-as22/http-server-base/src/plugins.mjs';
@@ -19,7 +21,6 @@ import PrRouter from 'express-promise-router';
 
 import dbAdapter from './dbAdapter/pg/index.mjs';
 import fallbackErrorHandler from './hnd/fallbackErrorHandler.mjs';
-import installGlobalRequestExtras from './hnd/globalRequestExtras.mjs';
 import installListenAddrPlumbing from './listenAddrPlumbing.mjs';
 import installRootRoutes from './hnd/rootRoutes.mjs';
 import libDebugFlags from './cfg/debugFlags.mjs';
@@ -94,7 +95,7 @@ const EX = async function createServer(customConfig) {
     console.debug('cleanup:', args);
   });
 
-  installGlobalRequestExtras(app);
+  installGlobalRequestExtras(srv, app);
   app.use(timeoutFallbackResponse({
     timeoutMsec: popCfg('str | num | undef', 'response_timeout_sec') * 1e3,
   }));
@@ -124,7 +125,7 @@ const EX = async function createServer(customConfig) {
   await installRootRoutes(srv);
 
   const confirmCorsImpl = makeGenericCorsHandler();
-  app.globalRequestExtras({
+  srv.globalRequestExtras({
     confirmCors() { return confirmCorsImpl(this); },
     getDb() { return srv.db; },
     getSrv() { return srv; },
