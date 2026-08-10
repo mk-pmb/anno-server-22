@@ -2,13 +2,15 @@
 
 import configFilesAdapter from
   '@ubhd-as22/http-server-base/src/cfg/configFilesAdapter/ad.mjs';
+import fallbackErrorHandler from
+  '@ubhd-as22/http-server-base/src/hnd/fallbackErrorHandler.mjs';
 import installGlobalRequestExtras from
   '@ubhd-as22/http-server-base/src/hnd/globalRequestExtras.mjs';
 import makeRequestBodyParser from
   '@ubhd-as22/http-server-base/src/hnd/util/parseRequestBody.mjs';
 import pluginsLib from '@ubhd-as22/http-server-base/src/plugins.mjs';
 import timeoutFallbackResponse from
-  '@ubhd-as22/http-server-base/src/hnd/timeoutFallbackResponse.mjs';
+  'hnd/timeoutFallbackResponse.mjs';
 
 import absDir from 'absdir';
 import envcfgMergeConfigs from 'envcfg-merge-configs-pmb';
@@ -20,7 +22,6 @@ import objPop from 'objpop';
 import PrRouter from 'express-promise-router';
 
 import dbAdapter from './dbAdapter/pg/index.mjs';
-import fallbackErrorHandler from './hnd/fallbackErrorHandler.mjs';
 import installListenAddrPlumbing from './listenAddrPlumbing.mjs';
 import installRootRoutes from './hnd/rootRoutes.mjs';
 import libDebugFlags from './cfg/debugFlags.mjs';
