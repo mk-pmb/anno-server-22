@@ -23,7 +23,7 @@ const EX = {
   learnOneCfgKey: learnOneUserGroup,
 
   async learnMeta(ctx, mustPopCfgMeta) {
-    const { cfgDict, mgr } = ctx;
+    const { mgr } = ctx;
 
     (function setupDefaultUserGroups() {
       const cfgKey = 'default_user_groups';
@@ -34,6 +34,7 @@ const EX = {
         return console.warn('Skipping default_user_groups setup'
           + ' because we do not have any known users.');
       }
+      const cfgDict = mustPopCfgMeta.getRawCfgDict();
       const astRgx = /\*/g;
       Object.entries(dug).forEach(function eachGroup(ent) {
         const [groupNameTpl, groupDetailsSpec] = ent;

@@ -6,6 +6,8 @@ import fallbackErrorHandler from
   '@ubhd-as22/http-server-base/src/hnd/fallbackErrorHandler.mjs';
 import installGlobalRequestExtras from
   '@ubhd-as22/http-server-base/src/hnd/globalRequestExtras.mjs';
+import makeGenericCorsHandler from
+  '@ubhd-as22/http-server-base/src/hnd/util/genericCorsHandler.mjs';
 import makeRequestBodyParser from
   '@ubhd-as22/http-server-base/src/hnd/util/parseRequestBody.mjs';
 import pluginsLib from '@ubhd-as22/http-server-base/src/plugins.mjs';
@@ -27,7 +29,6 @@ import installRootRoutes from './hnd/rootRoutes.mjs';
 import libDebugFlags from './cfg/debugFlags.mjs';
 import loggingUtil from './hnd/util/logging.mjs';
 import lusrmgr from './cfg/lusrmgr/index.mjs';
-import makeGenericCorsHandler from './hnd/util/genericCorsHandler.mjs';
 import prepareAcl from './acl/prepareAcl.mjs';
 import prepareRssFeedsConfig from './hnd/rss/prepareConfig.mjs';
 import servicesAdapter from './cfg/servicesAdapter.mjs';
