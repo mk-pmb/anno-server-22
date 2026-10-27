@@ -40,7 +40,7 @@
       maxQueryLength: 9009009
       # ^-- i.e. don't care, just rely on maxTotalLength.
 
-      okPathCharsRegExp:  '[\w\-\.\:\/,;=]+'
+      okPathCharsRegExp:  '[\w\-\.\:\/,;=~]+'
       okQueryCharsRegExp: '[\w\-\.\:\/,;=&]+'
       # ATTN: If you allow `%`, it may be allow potential attackers
       #   to use any escaped character. The redirect mechanisms in

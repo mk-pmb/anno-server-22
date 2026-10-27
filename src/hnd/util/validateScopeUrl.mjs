@@ -3,12 +3,16 @@
 import loMapValues from 'lodash.mapvalues';
 import regexpFlagsUpfront from 'regexp-flags-upfront';
 import splitStringOnce from 'split-string-or-buffer-once-pmb';
+import univeil from 'univeil';
 
 
 const EX = function validateScopeUrl(srv, svcId, potentialScopeUrl) {
   const bad = EX.whyBad(srv, svcId, potentialScopeUrl);
   return (bad ? { bad } : { ok: potentialScopeUrl });
 };
+
+
+function uniqArrayEntries(x) { return Array.from(new Set(Array.from(x))); }
 
 
 Object.assign(EX, {
@@ -47,7 +51,9 @@ Object.assign(EX, {
       const bad = orig.replace(rxObj, '');
       // console.debug('checkBadChars:', { bad, rxObj });
       if (!bad) { return; }
-      return 'Unexpected character(s) in sub URL ' + part.toLowerCase();
+      const msg = ('Unexpected character(s) in sub URL ' + part.toLowerCase()
+        + ': ' + uniqArrayEntries(bad).map(univeil.uHHHH).join(' '));
+      return msg;
     }
     const badChars = (checkBadChars('Path', subPath)
       || checkBadChars('Query', query));
