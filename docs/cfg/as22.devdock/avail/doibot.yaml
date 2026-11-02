@@ -6,7 +6,7 @@ version: '2.2'
 services:
 
   ${dd_tpl_bn}'':
-    image: 'node:20'
+    image: 'node:24'
     volumes:
       - ${dd_cfg doibot_basedir}':/app'
         #!^# volume_entry_expect_file: -f …/${dd_cfg doibot_appdir}'/package.json'

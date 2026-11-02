@@ -7,7 +7,7 @@ version: '2.2'
 services:
 
   ${dd_tpl_bn}'':
-    image: 'node:20'
+    image: 'node:24'
     volumes:
       - ${dd_cfg annosrv_appdir}':/app'
         #!^# volume_entry_expect_file: -f …/package.json
