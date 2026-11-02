@@ -13,7 +13,7 @@ function run_cli_main () {
   local -A CFG=(
     [run_task]='run_server_show_log_on_failure'
     [lint]=
-    [run_prog]='nodemjs'
+    [run_prog]='nodejs'
     [log_dest]="logs.@$HOSTNAME/server.log"
     )
   tty --silent || CFG[run_task]='actually_run_server'
@@ -56,7 +56,6 @@ function run_server_show_log_on_failure () {
 function actually_run_server () {
   tee_output_to_logfile || return $?
   verify_sigterm_compat || return $?
-  verify_run_prog || return $?
 
   local GIT_REPORT="$( (
     git log --format=%h -n 5
@@ -112,47 +111,6 @@ function verify_sigterm_compat () {
       "'$SELFFILE' as the docker command." >&2
     return 80
   fi
-}
-
-
-function verify_run_prog () {
-  local NMBIN="$SELFPATH"/node_modules/.bin
-  if [[ ":$PATH:" != *":$NMBIN:"* ]]; then
-    PATH="$NMBIN:$PATH:"
-    export PATH
-  fi
-
-  local PROG="${CFG[run_prog]}"
-  case "$PROG" in
-    '!no_verify!'* ) CFG[run_prog]="${PROG#!*!}"; return 0;;
-  esac
-
-  log_progress "Verify run_prog: $PROG"
-  { which "$PROG" && </dev/null "$PROG" -e 0; } &>/dev/null && return 0
-
-  local MAYBE=(
-    "$SELFPATH/node_modules/.bin/$PROG"
-    "/usr/lib/node_modules/.bin/$PROG"
-    "/usr/lib/node_modules/$PROG/bin/$PROG"
-    )
-  local ALTN=
-  for ALTN in "${MAYBE[@]}" ''; do
-    if [ -z "$ALTN" ]; then
-      log_progress "Using npm to search for run_prog locally." \
-        "This may take a few seconds."
-      ALTN="$(npm run sh which nodemjs | grep -Pe '^/')"
-    fi
-    [ -x "$ALTN" ] || continue
-    log_progress "Trying probable run_prog: $ALTN"
-    </dev/null "$ALTN" -e 0 &>/dev/null || continue
-    log_progress "Adjusting run_prog to: $ALTN"
-    CFG[run_prog]="$ALTN"
-    return 0
-  done
-
-  echo "E: Even npm cannot find $PROG." \
-    "Is the package installed correctly?" >&2
-  return 81
 }
 
 

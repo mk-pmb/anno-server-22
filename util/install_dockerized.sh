@@ -56,7 +56,7 @@ function dinst_dockerize () {
     --volume "$REPOPATH:/app:rw"
     "${DK_VARS[@]}"
     --workdir /app
-    node:20
+    node:24
     "$DKSELF"
     inside_docker_"$DK_TASK"
     )
@@ -131,7 +131,7 @@ function dinst_validate_docker_volume_path () {
 
 
 function dinst_inside_docker_install () {
-  local RUNMJS="$REPOPATH/node_modules/.bin/nodemjs"
+  local RUNMJS='nodejs'
   mkdir --parents -- "$(dirname -- "$NPM_AUDIT_LOG")" || true
   >"$NPM_AUDIT_LOG" || return $?$(
     echo "E: Failed to clear the npm audit log: $NPM_AUDIT_LOG" >&2)
@@ -163,7 +163,6 @@ function dinst_configure_npm () {
     omit            = dev
     package-lock    = false
     progress        = false
-    send-metrics    = false
     update-notifier = false
     ' >"$HOME"/.npmrc || return $?
 }
