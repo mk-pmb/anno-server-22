@@ -16,10 +16,11 @@ services:
     working_dir: '/app'
     environment:
       - ${dd_cfg}'doibot_appdir='
+      - ${dd_cfg}'ANNOSRV_HOST=annosrv_hostname'
+      - ${dd_cfg}'ANNOSRV_PUBLIC_INTF=annosrv_dkport'
       - |
         DOCKER_DOIBOT_CFG_OVERRIDES=
         CFG[anno_public_baseurl]=${dd_cfg anno_public_baseurl}'anno/'
-        CFG[doibot_auth_baseurl]='http://annosrv:8080/anno/'
     command: >
         bash -c '/app/"$$doibot_appdir"/doibot.sh cron_task'
     restart: ${dd_cfg doibot_docker_autorestart}''
